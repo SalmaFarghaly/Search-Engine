@@ -78,7 +78,10 @@ public class WebSpider{
                         final String urlText = page.attr("abs:href").trim();
                         final URL discoveredURL = new URL(urlText);
                         newURLS.add(discoveredURL);
-                        writeResults(discoveredURL.toString());
+                        ///System.out.print("GHASGSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS");
+                       DatabaseConnection.incrementInBound(discoveredURL.toString());
+                        ///System.out.print("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH");
+                        //	writeResults(discoveredURL.toString());
                     }
                 }
             } 
