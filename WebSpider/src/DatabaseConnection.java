@@ -12,7 +12,6 @@ public class DatabaseConnection {
 	
 	static Statement statement;
 	static Connection conn;
-//	private static PreparedStatement ps;
 	
 
 	//function to connect to the xampp server      
@@ -78,26 +77,20 @@ public class DatabaseConnection {
 		
 	}
 	static public void incrementOutBound(String url) throws SQLException {
-//		System.out.print("  Updateeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee3333\n");
 		String SQL="UPDATE url set outBound=outBound+1 WHERE Link=?";
 		PreparedStatement ps;
 		ps = conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
-//    	ps.setInt( 1,count);
     	ps.setString(1,url);
     	ps.executeUpdate();
-    	///insert(discoveredURL);
 		
 		
 	}
 	static public boolean isLinkExist(String url) throws SQLException {
-	///	System.out.print("Came Here\n");
 		String SQL="SELECT count(*) FROM url WHERE Link=?";
 		PreparedStatement ps= conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
 	     ps.setString( 1, url);
 	     ResultSet rs = ps.executeQuery();
 	     int n=0;
-//	     System.out.print("get Hereeeee\n");
-//	   System.out.print(rs+"\n");
 	     if ( rs.next() ) {
 	    	    n = rs.getInt(1);
 	    	    if(n>0)
@@ -122,7 +115,6 @@ public class DatabaseConnection {
 }
 	
 	static public void saveInitials(String url) throws SQLException {
-//		System.out.print(url+"   INITIALLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL\n");
     	 String SQL2 = "INSERT INTO url (Link,inBound,outBound,doneIndexing) VALUES (?,?,?,?)";
     		PreparedStatement ps = conn.prepareStatement( SQL2, Statement.RETURN_GENERATED_KEYS );
 	    	ps.setString( 1, url);
@@ -183,7 +175,6 @@ public class DatabaseConnection {
 	     {
 	    	 String SQL3=null;
 	    	 if(pos=="h1") {
-	    		 // String SQL2 = "INSERT INTO url (Link,inBound,outBound,doneIndexing) VALUES (?,?,?,?)";
 	    		 	SQL3 = "INSERT INTO indexing (link,word,h1,h2,h3,h4,h5,h6,p) VALUES (?,?,?,?,?,?,?,?,?)";
 			    	ps = conn.prepareStatement( SQL3, Statement.RETURN_GENERATED_KEYS );
 			    	ps.setString(1, url);
