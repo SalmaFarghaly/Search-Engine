@@ -19,6 +19,7 @@ import org.jsoup.nodes.Document;
 
 public class Parser {
 	private static List<String> stopWords =null;
+	private static List<Character> punctuationMarks=new ArrayList<Character>();
 	//list of documents you want to index
 	//this is stored in our database
 	private static List<File> webPageFilesList = new ArrayList<File>();
@@ -26,27 +27,52 @@ public class Parser {
 	public static void loadStopwords() throws IOException {
 		
 	    stopWords = Files.readAllLines(Paths.get("C:\\Users\\Dell\\git\\repository\\WebSpider\\english_stopwords.txt"));
+//	    punctuationMarks.addAll(c)
+//	    punctuationMarks=Files.readAllLines(Paths.get("C:\\Users\\Dell\\git\\repository\\WebSpider\\ punctuationMarks.txt");
 	    System.out.print("stopWords\n"+stopWords+"\n");
 	}
 
 	public static List<String> parse(String doc) throws IOException {
 		List<String> tokenList = new ArrayList<String>();
 		String[] tokens = doc.toString().split("[^a-zA-Z0-9'-]");
-		String currentStr=null;
-		for (String token : tokens){
+		String loweredCaseToken=null;
+		for(String token:tokens) {
+			//remove numbers
 			if(Parser.isNumeric(token)==false) {
-				if(token.isEmpty())
-					continue;
-				currentStr=Stemmer.Stemming(token.toLowerCase());
-				if(currentStr==null||currentStr.isEmpty())
-					continue;
-				tokenList.add(currentStr);
+			//remove punctuation marks
+			token.replaceAll("\\p{Punct}", "");
+			loweredCaseToken=token.toLowerCase();
+			if(!loweredCaseToken.isBlank()&&!loweredCaseToken.isEmpty())
+			tokenList.add(loweredCaseToken);
 			}
-			else
-				tokenList.add(token);
+			
+			
+		}
+		//remove stop word
+		removeStopWords(tokenList);
+		for(String token:tokenList) {
+			token=Stemmer.Stemming(token);
+			if(token.isEmpty()||token.isBlank())
+				tokenList.remove(token);
 				
 		}
-		removeStopWords(tokenList);
+		//Stemminggg
+	
+		//change all words to lower case 
+		// remove any numbers and punct
+//		removeStopWords(tokenList);
+//		String currentStr=null;
+//		for (String token : tokens){
+//			if(Parser.isNumeric(token)==false) {
+//				if(token.isEmpty())
+//					continue;
+//				currentStr=Stemmer.Stemming(token.toLowerCase());
+//				if(currentStr==null||currentStr.isEmpty())
+//					continue;
+//				tokenList.add(currentStr);
+//			}
+//				
+//		}
 		return tokenList;
 	}
 	//check if this string can be parsed to string

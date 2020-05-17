@@ -166,6 +166,8 @@ public class DatabaseConnection {
 	    		 SQL2 = "UPDATE indexing set h6=h6+1 WHERE link=? and word=?";
 	    	 else if(pos=="p") 
 	    		 SQL2 = "UPDATE indexing set p=p+1 WHERE link=? and word=?";
+	      	 else if(pos=="title") 
+	    		 SQL2 = "UPDATE indexing set title=title+1 WHERE link=? and word=?";
 			    	ps = conn.prepareStatement( SQL2, Statement.RETURN_GENERATED_KEYS );
 			    	ps.setString(1, url);
 			    	ps.setString(2, word);
@@ -175,7 +177,7 @@ public class DatabaseConnection {
 	     {
 	    	 String SQL3=null;
 	    	 if(pos=="h1") {
-	    		 	SQL3 = "INSERT INTO indexing (link,word,h1,h2,h3,h4,h5,h6,p) VALUES (?,?,?,?,?,?,?,?,?)";
+	    		 	SQL3 = "INSERT INTO indexing (link,word,h1,h2,h3,h4,h5,h6,p,title) VALUES (?,?,?,?,?,?,?,?,?,?)";
 			    	ps = conn.prepareStatement( SQL3, Statement.RETURN_GENERATED_KEYS );
 			    	ps.setString(1, url);
 			    	ps.setString(2, word);
@@ -186,11 +188,12 @@ public class DatabaseConnection {
 			    	ps.setInt(7, 0);
 			    	ps.setInt(8, 0);
 			    	ps.setInt(9, 0);
+			    	ps.setInt(10, 0);
 			    	ps.executeUpdate();
 	    		 
 	    	 }
 	    	 else if(pos=="h2") {
-	    		 	SQL3 = "INSERT INTO indexing (link,word,h1,h2,h3,h4,h5,h6,p) VALUES (?,?,?,?,?,?,?,?,?)";
+	    		 	SQL3 = "INSERT INTO indexing (link,word,h1,h2,h3,h4,h5,h6,p,title) VALUES (?,?,?,?,?,?,?,?,?,?)";
 			    	ps = conn.prepareStatement( SQL3, Statement.RETURN_GENERATED_KEYS );
 			    	ps.setString(1, url);
 			    	ps.setString(2, word);
@@ -201,10 +204,11 @@ public class DatabaseConnection {
 			    	ps.setInt(7, 0);
 			    	ps.setInt(8, 0);
 			    	ps.setInt(9, 0);
+			    	ps.setInt(10, 0);
 				    	ps.executeUpdate();
 	    	 }
 	    	 else if(pos=="h3") {
-	    		 	SQL3 = "INSERT INTO indexing (link,word,h1,h2,h3,h4,h5,h6,p) VALUES (?,?,?,?,?,?,?,?,?)";
+	    		 	SQL3 = "INSERT INTO indexing (link,word,h1,h2,h3,h4,h5,h6,p,title) VALUES (?,?,?,?,?,?,?,?,?,?)";
 			    	ps = conn.prepareStatement( SQL3, Statement.RETURN_GENERATED_KEYS );
 			    	ps.setString(1, url);
 			    	ps.setString(2, word);
@@ -215,11 +219,12 @@ public class DatabaseConnection {
 			    	ps.setInt(7, 0);
 			    	ps.setInt(8, 0);
 			    	ps.setInt(9, 0);
+			    	ps.setInt(10, 0);
 				    	ps.executeUpdate();
 	    		 
 	    	 }
 			else if(pos=="h4") {
-    		 	SQL3 = "INSERT INTO indexing (link,word,h1,h2,h3,h4,h5,h6,p) VALUES (?,?,?,?,?,?,?,?,?)";
+    		 	SQL3 = "INSERT INTO indexing (link,word,h1,h2,h3,h4,h5,h6,p,title) VALUES (?,?,?,?,?,?,?,?,?,?)";
 		    	ps = conn.prepareStatement( SQL3, Statement.RETURN_GENERATED_KEYS );
 		    	ps.setString(1, url);
 		    	ps.setString(2, word);
@@ -230,11 +235,12 @@ public class DatabaseConnection {
 		    	ps.setInt(7, 0);
 		    	ps.setInt(8, 0);
 		    	ps.setInt(9, 0);
+		    	ps.setInt(10, 0);
 			    	ps.executeUpdate();
 				    		 
 			}
 			else if(pos=="h5") {
-    		 	SQL3 = "INSERT INTO indexing (link,word,h1,h2,h3,h4,h5,h6,p) VALUES (?,?,?,?,?,?,?,?,?)";
+    		 	SQL3 = "INSERT INTO indexing (link,word,h1,h2,h3,h4,h5,h6,p,title) VALUES (?,?,?,?,?,?,?,?,?,?)";
 		    	ps = conn.prepareStatement( SQL3, Statement.RETURN_GENERATED_KEYS );
 		    	ps.setString(1, url);
 		    	ps.setString(2, word);
@@ -245,13 +251,12 @@ public class DatabaseConnection {
 		    	ps.setInt(7, 1);
 		    	ps.setInt(8, 0);
 		    	ps.setInt(9, 0);
+		    	ps.setInt(10, 0);
 			    	ps.executeUpdate();
 				 
 			}
 			else if(pos=="h6") {
-    		 	SQL3 = "INSERT INTO indexing set h1=0 and h2=0 and h3=0 and h4=0 and h5=0 and h6=1 and p=0 WHERE link=? and word=?";
-			    	ps = conn.prepareStatement( SQL3, Statement.RETURN_GENERATED_KEYS );
-	    		 	SQL3 = "INSERT INTO indexing (link,word,h1,h2,h3,h4,h5,h6,p) VALUES (?,?,?,?,?,?,?,?,?)";
+	    		 	SQL3 = "INSERT INTO indexing (link,word,h1,h2,h3,h4,h5,h6,p,title) VALUES (?,?,?,?,?,?,?,?,?,?)";
 			    	ps = conn.prepareStatement( SQL3, Statement.RETURN_GENERATED_KEYS );
 			    	ps.setString(1, url);
 			    	ps.setString(2, word);
@@ -262,21 +267,39 @@ public class DatabaseConnection {
 			    	ps.setInt(7, 0);
 			    	ps.setInt(8, 1);
 			    	ps.setInt(9, 0);
+			    	ps.setInt(10, 0);
 			    	ps.executeUpdate();
 				 
 			}
-			else {
-    		 	SQL3 = "INSERT INTO indexing (link,word,h1,h2,h3,h4,h5,h6,p) VALUES (?,?,?,?,?,?,?,?,?)";
+			else if(pos=="p") {
+    		 	SQL3 = "INSERT INTO indexing (link,word,h1,h2,h3,h4,h5,h6,p,title) VALUES (?,?,?,?,?,?,?,?,?,?)";
 		    	ps = conn.prepareStatement( SQL3, Statement.RETURN_GENERATED_KEYS );
 		    	ps.setString(1, url);
 		    	ps.setString(2, word);
-		    	ps.setInt(3, 1);
+		    	ps.setInt(3, 0);
 		    	ps.setInt(4, 0);
 		    	ps.setInt(5, 0);
 		    	ps.setInt(6, 0);
 		    	ps.setInt(7, 0);
 		    	ps.setInt(8, 0);
 		    	ps.setInt(9, 1);
+		    	ps.setInt(10, 0);
+			    	ps.executeUpdate();
+				
+			}
+			else if(pos=="title") {
+    		 	SQL3 = "INSERT INTO indexing (link,word,h1,h2,h3,h4,h5,h6,p,title) VALUES (?,?,?,?,?,?,?,?,?,?)";
+		    	ps = conn.prepareStatement( SQL3, Statement.RETURN_GENERATED_KEYS );
+		    	ps.setString(1, url);
+		    	ps.setString(2, word);
+		    	ps.setInt(3, 0);
+		    	ps.setInt(4, 0);
+		    	ps.setInt(5, 0);
+		    	ps.setInt(6, 0);
+		    	ps.setInt(7, 0);
+		    	ps.setInt(8, 0);
+		    	ps.setInt(9, 0);
+		    	ps.setInt(10, 1);
 			    	ps.executeUpdate();
 				
 			}

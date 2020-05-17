@@ -44,7 +44,8 @@ public class Indexer {
 				currentStr=parsedWords.get(j);
 				System.out.print("CurrenttttWordddddd   "+currentStr+"\n");
 					System.out.print(currentStr+" Savedd in the database............................\n");
-				DatabaseConnection.addStemmedWord(currentStr, url, pos);
+				if(!currentStr.isEmpty()&&!currentStr.isBlank())
+					DatabaseConnection.addStemmedWord(currentStr, url, pos);
 			}
 		}
 		
@@ -73,6 +74,8 @@ public class Indexer {
 			stemAndRemoveStopWords(h6Tags,url,"h6");
 			java.util.List<String> p = words.select("p").eachText();
 			stemAndRemoveStopWords(p,url,"p");
+			java.util.List<String> titleTags = words.select("title").eachText();
+			stemAndRemoveStopWords(titleTags,url,"title");
 			//set done indexing to 1
 			DatabaseConnection.SetDoneIndexing(url);
 			url = DatabaseConnection.getFirstUnIndexed();
