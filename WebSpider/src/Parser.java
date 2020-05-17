@@ -27,8 +27,6 @@ public class Parser {
 	public static void loadStopwords() throws IOException {
 		
 	    stopWords = Files.readAllLines(Paths.get("C:\\Users\\Dell\\git\\repository\\WebSpider\\english_stopwords.txt"));
-//	    punctuationMarks.addAll(c)
-//	    punctuationMarks=Files.readAllLines(Paths.get("C:\\Users\\Dell\\git\\repository\\WebSpider\\ punctuationMarks.txt");
 	    System.out.print("stopWords\n"+stopWords+"\n");
 	}
 
@@ -56,23 +54,6 @@ public class Parser {
 				tokenList.remove(token);
 				
 		}
-		//Stemminggg
-	
-		//change all words to lower case 
-		// remove any numbers and punct
-//		removeStopWords(tokenList);
-//		String currentStr=null;
-//		for (String token : tokens){
-//			if(Parser.isNumeric(token)==false) {
-//				if(token.isEmpty())
-//					continue;
-//				currentStr=Stemmer.Stemming(token.toLowerCase());
-//				if(currentStr==null||currentStr.isEmpty())
-//					continue;
-//				tokenList.add(currentStr);
-//			}
-//				
-//		}
 		return tokenList;
 	}
 	//check if this string can be parsed to string
