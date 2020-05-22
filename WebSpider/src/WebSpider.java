@@ -129,7 +129,7 @@ public class WebSpider{
     	int i=0;
     	URL currentURL=null;
     	   int countURLS=0;
-    	while((newURLS.isEmpty()==false||i==0) && countURLS<5000) {
+    	while((newURLS.isEmpty()==false||i==0) && countURLS<10000) {
     		
 	        currentURL=this.newURLS.get(0);
 	        System.out.print("CUREENT URL IS "+currentURL+"\n");
@@ -160,7 +160,7 @@ public class WebSpider{
 //		              System.out.print("Thread # "+this.threadNo+" DISCOVERED "+discoveredURL+"\n");
 		              parts=discoveredURL.toString().split("#");
 		              
-					  if(DatabaseConnection.isLinkExist(parts[0])==false&&countURLS<5000){
+					  if(DatabaseConnection.isLinkExist(parts[0])==false&&countURLS<10000){
 						  	this.newURLS.add(new URL(parts[0]));
 						  	this.count++;
 					  }
@@ -168,7 +168,7 @@ public class WebSpider{
 						synchronized(this.dummy) 
 						{
 					  //check after # relation exist 
-			              if(countURLS<5000&&DatabaseConnection.isRelationExist(currentURL.toString(), parts[0])==0) {
+			              if(countURLS<10000&&DatabaseConnection.isRelationExist(currentURL.toString(), parts[0])==0) {
 			            	  //lock table
 			              	DatabaseConnection.incrementInBound(parts[0]);
 			              	DatabaseConnection.insertDocument(currentURL.toString(),parts[0]);
@@ -176,7 +176,7 @@ public class WebSpider{
 			              	//unlock table
 			              }
 			           
-			              else if(countURLS>=5000)
+			              else if(countURLS>=10000)
 			              	break;
 			        	  }
 		        	  }
