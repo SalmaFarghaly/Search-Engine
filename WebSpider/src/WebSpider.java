@@ -86,7 +86,7 @@ public class WebSpider{
     	
     	
     	try {
-			reader = new BufferedReader(new FileReader("C:\\Users\\Dell\\Desktop\\Apt project\\seedlist.txt"));
+			reader = new BufferedReader(new FileReader("C:\\Users\\Lenovo\\git\\Search-Engine1\\seedlist.txt"));
 			String line = reader.readLine();
 			while (line != null) {
 				System.out.println(line);
@@ -97,7 +97,7 @@ public class WebSpider{
 			System.out.print(list+"\n");
 		}
     	catch (IOException e) {
-    		System.out.print("EROOOOOOOOOOOOOO"+e+"\n");
+    		System.out.print("ERROR"+e+"\n");
 			e.printStackTrace();
 		}
     	DatabaseConnection.DatabaseConnect();

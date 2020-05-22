@@ -6,21 +6,25 @@ import java.util.List;
 import java.util.Scanner;
 
 public class QueryProcessor {
-	private static List<String> stopWords =null;
-	public static void main(String[] args) throws IOException {
+	static String s = null; 
+	public static List<String> GetParsedQuery() throws IOException {
 		// TODO Auto-generated method stub
-		String s; 
+		
 		System.out.println("Enter a string"); 
 		Scanner sc = new Scanner(System.in);
  		s = sc.nextLine();
  		Parser.loadStopwords();
  		List<String> output = Parser.parse(s);
+ 		return output;
  		
- 		
- 		for (int i = 0; i <output.size(); i++) {
+ 		/*for (int i = 0; i <output.size(); i++) {
  			System.out.println("Entered string "+output.get(i)); 
- 		}
+ 		}*/
 		
+	}
+	public static String[] GetOriginalQuery() {
+		 String[] tokens = s.split("\\S");
+		return tokens;
 	}
 }
 	

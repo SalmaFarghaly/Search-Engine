@@ -23,9 +23,11 @@ import java.io.FileReader;
 
 public class Indexer {
 	
-	
+	static int x = 0;
+	static int totalDocuments;
 	public Indexer() throws IOException, SQLException {
 		System.out.print("Indexer Started...................\n");
+		totalDocuments= DatabaseConnection.getTotalDocuments();
 		createInvertedFile();
 		
 	}
@@ -57,9 +59,9 @@ public class Indexer {
 		String url = DatabaseConnection.getFirstUnIndexed();
 		 Document doc;
 		 while(url!=null) {
-			System.out.print("The current url "+url+"\n");
+			System.out.print("["+x+"/"+totalDocuments+"] The current url "+url+"\n");
 			 doc = Jsoup.connect(url).get();
-			Elements words = doc.select("h1, h2, h3, h4, h5, h6,p");
+			Elements words = doc.select("h1, h2, h3, h4, h5, h6,p,titles");
 			java.util.List<String> h1Tags = words.select("h1").eachText();
 			stemAndRemoveStopWords(h1Tags,url,"h1");
 			java.util.List<String> h2Tags = words.select("h2").eachText();
