@@ -2,6 +2,10 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -139,7 +143,7 @@ public class DatabaseConnection {
 	     return 0;
 		
 	}
-	
+		
 	static public void addStemmedWord(String word,String url,String pos) throws SQLException {
 		String SQL="SELECT count(*) FROM indexing WHERE link=? and word=?";
 		PreparedStatement ps= conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
@@ -462,4 +466,50 @@ public class DatabaseConnection {
 		PreparedStatement ps= conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
 		ps.executeUpdate();
 	}
+
+	//--------------------------------- Ranking Queries -----------------------------//
+	static public int getTotalDocuments() throws SQLException {
+		String SQL="SELECT count(*) FROM url";
+		PreparedStatement ps= conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
+		 ResultSet rs = ps.executeQuery();
+	       int total=0;
+	     if ( rs.next() ) {
+	    	    total= rs.getInt(1);
+	}
+		    return total;
+	}
+
+	//URLs length
+	static public int getDocumentslength (String url) throws SQLException{
+		String SQL="SELECT count(*) FROM indexing WHERE link= '"+url + "'";
+		PreparedStatement ps= conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
+		ResultSet rs = ps.executeQuery();
+		int n =-1;
+		String x = null;
+	     if ( rs.next() ) {
+	    	  n=rs.getInt(1);
+	     }
+		return n;
+		
+	}
+	
+	//URL that contain the word and their TF
+	static public Map<Integer,String> getDocumentsinfo (String term) throws SQLException{
+		String SQL="SELECT link,(title+h1+h2+h3+h4+h5+h6+p) FROM indexing where word = '"+term+"'";
+		PreparedStatement ps= conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
+		 ResultSet rs = ps.executeQuery();
+		 System.out.print("Created... ");
+		 Map<Integer,String> DocLengthmap=new HashMap<Integer,String>(); 
+		 int i=0;
+	       while ( rs.next() ) {
+	    	   System.out.print("filling... ");  
+	    	  String s = rs.getString(1);
+	    	  int t = rs.getInt(2);
+	    	  DocLengthmap.put(t,s);
+	    	  
+	    	  
+	     }
+	      return DocLengthmap;
+	}
 }
+

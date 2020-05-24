@@ -1,4 +1,5 @@
 
+
 import org.jsoup.Jsoup;
 
 import org.jsoup.nodes.Document;
@@ -69,6 +70,7 @@ public class WebSpider{
     	}
   }
 
+
     
     private static class Crawl extends Thread{
     	//crawled link
@@ -95,6 +97,7 @@ public class WebSpider{
     	URL currentURL=null;
     	int countURLS=0;
     	while(newURLS.isEmpty()==false&& countURLS<10000) {
+
     		
 	        currentURL=this.newURLS.get(0);
 	        try {
@@ -150,7 +153,7 @@ public class WebSpider{
 					  //those 3 lines need a lock on database
 						synchronized(this.dummy) 
 						{
- 
+
 			              if(countURLS<10000&&DatabaseConnection.isRelationExist(currentURL.toString(), parts[0])==0) {
 			            	  //lock table
 			              	DatabaseConnection.incrementInBound(parts[0]);
