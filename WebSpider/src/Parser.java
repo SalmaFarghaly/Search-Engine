@@ -33,12 +33,14 @@ public class Parser {
 	public static List<String> parse(String doc) throws IOException {
 		List<String> tokenList = new ArrayList<String>();
 		String[] tokens = doc.toString().split("[^a-zA-Z0-9'-]");
+		System.out.print("TOKENNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN\n");
+		System.out.print(Arrays.toString(tokens));
 		String loweredCaseToken=null;
 		for(String token:tokens) {
 			//remove numbers
-			if(Parser.isNumeric(token)==false) {
+			if(is4DigitNumber(token)==true||isNumeric(token)==false) {
 			//remove punctuation marks
-			token.replaceAll("\\p{Punct}", "");
+//			token.replaceAll("\\p{Punct}", "");
 			loweredCaseToken=token.toLowerCase();
 			if(!loweredCaseToken.isBlank()&&!loweredCaseToken.isEmpty())
 			tokenList.add(loweredCaseToken);
@@ -47,20 +49,43 @@ public class Parser {
 			
 		}
 		//remove stop word
+		ArrayList<String> WordsAfterStemming=new ArrayList<String>();
 		removeStopWords(tokenList);
 		for(String token:tokenList) {
-			token=Stemmer.Stemming(token);
-			if(token.isEmpty()||token.isBlank())
-				tokenList.remove(token);
+			if(is4DigitNumber(token)==true) {
+				WordsAfterStemming.add(token);
+			}
+			else {
+				ArrayList<String> stemmedWords=Stemmer.Stemming(token);
+				for(String word:stemmedWords) {
+					if(!word.isEmpty()&&!word.isBlank())
+						WordsAfterStemming.add(word);	
+				}
+			}
 				
 		}
-		return tokenList;
+		return WordsAfterStemming;
 	}
 	//check if this string can be parsed to string
+	
 	public static boolean isNumeric(String str) {
+		try {
+			Integer.parseInt(str);
+			return true;
+		}
+		catch(NumberFormatException e){
+			return false;
+		}
+	}
+	public static boolean is4DigitNumber(String str) {
 		 try {  
-			    Integer.parseInt(str);  
-			    return true;
+			 	//number after parsing it to integer
+			    int n=Integer.parseInt(str);  
+			    int d=n/1000;
+			    if(d>=1&&d<=9)
+			    	return true;
+			    else
+			    	return false;
 			  } catch(NumberFormatException e){  
 			    return false;  
 			  }  

@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.sql.SQLException;
 
 import org.jsoup.Jsoup;
@@ -54,31 +55,38 @@ public class Indexer {
 	public void createInvertedFile() throws IOException, SQLException {
 		//load Stop Words
 		Parser.loadStopwords();
-		String url = DatabaseConnection.getFirstUnIndexed();
+		String url = null ;
+		while(url==null) {
+			url=DatabaseConnection.getFirstUnIndexed();
 		 Document doc;
-		 while(url!=null) {
-			System.out.print("The current url "+url+"\n");
-			 doc = Jsoup.connect(url).get();
-			Elements words = doc.select("h1, h2, h3, h4, h5, h6,p");
-			java.util.List<String> h1Tags = words.select("h1").eachText();
-			stemAndRemoveStopWords(h1Tags,url,"h1");
-			java.util.List<String> h2Tags = words.select("h2").eachText();
-			stemAndRemoveStopWords(h2Tags,url,"h2");
-			java.util.List<String> h3Tags = words.select("h3").eachText();
-			stemAndRemoveStopWords(h3Tags,url,"h3");
-			java.util.List<String> h4Tags = words.select("h4").eachText();
-			stemAndRemoveStopWords(h4Tags,url,"h4");
-			java.util.List<String> h5Tags = words.select("h5").eachText();
-			stemAndRemoveStopWords(h5Tags,url,"h5");
-			java.util.List<String> h6Tags = words.select("h6").eachText();
-			stemAndRemoveStopWords(h6Tags,url,"h6");
-			java.util.List<String> p = words.select("p").eachText();
-			stemAndRemoveStopWords(p,url,"p");
-			java.util.List<String> titleTags = words.select("title").eachText();
-			stemAndRemoveStopWords(titleTags,url,"title");
-			//set done indexing to 1
-			DatabaseConnection.SetDoneIndexing(url);
-			url = DatabaseConnection.getFirstUnIndexed();
+			 while(url!=null) {
+				System.out.print("The current urllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll\n "+url+"\n");
+				 doc = Jsoup.connect(url).get();
+				Elements words = doc.select("h1, h2, h3, h4, h5, h6,p,title,i,b");
+				java.util.List<String> h1Tags = words.select("h1").eachText();
+				stemAndRemoveStopWords(h1Tags,url,"h1");
+				java.util.List<String> h2Tags = words.select("h2").eachText();
+				stemAndRemoveStopWords(h2Tags,url,"h2");
+				java.util.List<String> h3Tags = words.select("h3").eachText();
+				stemAndRemoveStopWords(h3Tags,url,"h3");
+				java.util.List<String> h4Tags = words.select("h4").eachText();
+				stemAndRemoveStopWords(h4Tags,url,"h4");
+				java.util.List<String> h5Tags = words.select("h5").eachText();
+				stemAndRemoveStopWords(h5Tags,url,"h5");
+				java.util.List<String> h6Tags = words.select("h6").eachText();
+				stemAndRemoveStopWords(h6Tags,url,"h6");
+				java.util.List<String> p = words.select("p").eachText();
+				stemAndRemoveStopWords(p,url,"p");
+				java.util.List<String> titleTags = words.select("title").eachText();
+				stemAndRemoveStopWords(titleTags,url,"title");
+				java.util.List<String> italicTags = words.select("i").eachText();
+				stemAndRemoveStopWords(italicTags,url,"i");
+				java.util.List<String> boldTags = words.select("b").eachText();
+				stemAndRemoveStopWords(boldTags,url,"b");
+				//set done indexing to 1
+				DatabaseConnection.SetDoneIndexing(url);
+				url = DatabaseConnection.getFirstUnIndexed();
+			}
 		}
 		
 		
@@ -86,6 +94,22 @@ public class Indexer {
     public static void main(String[] args) throws IOException, SQLException {
 		//Connect to DataBase
     	DatabaseConnection.DatabaseConnect();
+
+    	System.out.println("Enter You want to re-index or index: (1) index (2) re-index");
+    	 BufferedReader consoleReader =  new BufferedReader(new InputStreamReader(System.in)); 
+        // Reading data using readLine 
+        String type = consoleReader.readLine(); 
+        //check if he wants to re-index the content or not
+        if(Integer.parseInt(type)==2) {
+        	//drop all the table
+        	
+        	DatabaseConnection.dropIndexingTable();
+        	//reset done indexing of all urls 
+        	DatabaseConnection.resetDoneIndexing();
+        }
+        else{
+        	DatabaseConnection.deleteNonDoneIndexingWords();
+        }
     	Indexer indexer=new Indexer();
     }
 
