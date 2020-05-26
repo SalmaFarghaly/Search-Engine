@@ -60,12 +60,13 @@ public class DatabaseConnection {
 		    	ps.executeUpdate();
 	     }
 	     else {
-	    	 String SQL2 = "INSERT INTO url (Link,inBound,outBound,doneIndexing) VALUES (?,?,?,?)";
+	    	 String SQL2 = "INSERT INTO url (Link,inBound,outBound,doneIndexing,startIndexing) VALUES (?,?,?,?,?)";
 		    	ps = conn.prepareStatement( SQL2, Statement.RETURN_GENERATED_KEYS );
 		    	ps.setString( 1, discoveredURL);
 		    	ps.setInt(2, 1);
 		    	ps.setInt(3,0);
 		    	ps.setInt(4,0);
+		    	ps.setInt(5,0);
 		    	ps.executeUpdate();
 	     }
 	
@@ -119,12 +120,13 @@ public class DatabaseConnection {
 }
 	
 	static public void saveInitials(String url) throws SQLException {
-    	 String SQL2 = "INSERT INTO url (Link,inBound,outBound,doneIndexing) VALUES (?,?,?,?)";
+    	 String SQL2 = "INSERT INTO url (Link,inBound,outBound,doneIndexing,startIndexing) VALUES (?,?,?,?)";
     		PreparedStatement ps = conn.prepareStatement( SQL2, Statement.RETURN_GENERATED_KEYS );
 	    	ps.setString( 1, url);
 	    	ps.setInt(2, 0);
 	    	ps.setInt(3,0);
 	    	ps.setInt(4,0);
+	    	ps.setInt(5,0);
 	    	ps.executeUpdate();
 	}
 	
@@ -172,6 +174,10 @@ public class DatabaseConnection {
 	    		 SQL2 = "UPDATE indexing set p=p+1 WHERE link=? and word=?";
 	      	 else if(pos=="title") 
 	    		 SQL2 = "UPDATE indexing set title=title+1 WHERE link=? and word=?";
+	    	 else if(pos=="i") 
+	    		 SQL2 = "UPDATE indexing set italic=italic+1 WHERE link=? and word=?";
+	    	 else if(pos=="b") 
+	    		 SQL2 = "UPDATE indexing set bold=bold+1 WHERE link=? and word=?";
 			    	ps = conn.prepareStatement( SQL2, Statement.RETURN_GENERATED_KEYS );
 			    	ps.setString(1, url);
 			    	ps.setString(2, word);
@@ -179,9 +185,9 @@ public class DatabaseConnection {
 	     }
 	     else
 	     {
-	    	 String SQL3=null;
+	    	 String SQL3 = "INSERT INTO indexing (link,word,h1,h2,h3,h4,h5,h6,p,title,italic,bold) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
 	    	 if(pos=="h1") {
-	    		 	SQL3 = "INSERT INTO indexing (link,word,h1,h2,h3,h4,h5,h6,p,title) VALUES (?,?,?,?,?,?,?,?,?,?)";
+	    		 	
 			    	ps = conn.prepareStatement( SQL3, Statement.RETURN_GENERATED_KEYS );
 			    	ps.setString(1, url);
 			    	ps.setString(2, word);
@@ -193,11 +199,12 @@ public class DatabaseConnection {
 			    	ps.setInt(8, 0);
 			    	ps.setInt(9, 0);
 			    	ps.setInt(10, 0);
+			    	ps.setInt(11, 0);
+			    	ps.setInt(12, 0);
 			    	ps.executeUpdate();
 	    		 
 	    	 }
 	    	 else if(pos=="h2") {
-	    		 	SQL3 = "INSERT INTO indexing (link,word,h1,h2,h3,h4,h5,h6,p,title) VALUES (?,?,?,?,?,?,?,?,?,?)";
 			    	ps = conn.prepareStatement( SQL3, Statement.RETURN_GENERATED_KEYS );
 			    	ps.setString(1, url);
 			    	ps.setString(2, word);
@@ -209,10 +216,11 @@ public class DatabaseConnection {
 			    	ps.setInt(8, 0);
 			    	ps.setInt(9, 0);
 			    	ps.setInt(10, 0);
+			    	ps.setInt(11, 0);
+			    	ps.setInt(12, 0);
 				    	ps.executeUpdate();
 	    	 }
 	    	 else if(pos=="h3") {
-	    		 	SQL3 = "INSERT INTO indexing (link,word,h1,h2,h3,h4,h5,h6,p,title) VALUES (?,?,?,?,?,?,?,?,?,?)";
 			    	ps = conn.prepareStatement( SQL3, Statement.RETURN_GENERATED_KEYS );
 			    	ps.setString(1, url);
 			    	ps.setString(2, word);
@@ -224,11 +232,13 @@ public class DatabaseConnection {
 			    	ps.setInt(8, 0);
 			    	ps.setInt(9, 0);
 			    	ps.setInt(10, 0);
+			    	ps.setInt(11, 0);
+			    	ps.setInt(12, 0);
 				    	ps.executeUpdate();
 	    		 
 	    	 }
 			else if(pos=="h4") {
-    		 	SQL3 = "INSERT INTO indexing (link,word,h1,h2,h3,h4,h5,h6,p,title) VALUES (?,?,?,?,?,?,?,?,?,?)";
+    		 	
 		    	ps = conn.prepareStatement( SQL3, Statement.RETURN_GENERATED_KEYS );
 		    	ps.setString(1, url);
 		    	ps.setString(2, word);
@@ -240,11 +250,13 @@ public class DatabaseConnection {
 		    	ps.setInt(8, 0);
 		    	ps.setInt(9, 0);
 		    	ps.setInt(10, 0);
+		    	ps.setInt(11, 0);
+		    	ps.setInt(12, 0);
 			    	ps.executeUpdate();
 				    		 
 			}
 			else if(pos=="h5") {
-    		 	SQL3 = "INSERT INTO indexing (link,word,h1,h2,h3,h4,h5,h6,p,title) VALUES (?,?,?,?,?,?,?,?,?,?)";
+    		 	
 		    	ps = conn.prepareStatement( SQL3, Statement.RETURN_GENERATED_KEYS );
 		    	ps.setString(1, url);
 		    	ps.setString(2, word);
@@ -256,11 +268,13 @@ public class DatabaseConnection {
 		    	ps.setInt(8, 0);
 		    	ps.setInt(9, 0);
 		    	ps.setInt(10, 0);
+		    	ps.setInt(11, 0);
+		    	ps.setInt(12, 0);
 			    	ps.executeUpdate();
 				 
 			}
 			else if(pos=="h6") {
-	    		 	SQL3 = "INSERT INTO indexing (link,word,h1,h2,h3,h4,h5,h6,p,title) VALUES (?,?,?,?,?,?,?,?,?,?)";
+	    		 	
 			    	ps = conn.prepareStatement( SQL3, Statement.RETURN_GENERATED_KEYS );
 			    	ps.setString(1, url);
 			    	ps.setString(2, word);
@@ -272,11 +286,13 @@ public class DatabaseConnection {
 			    	ps.setInt(8, 1);
 			    	ps.setInt(9, 0);
 			    	ps.setInt(10, 0);
+			    	ps.setInt(11, 0);
+			    	ps.setInt(12, 0);
 			    	ps.executeUpdate();
 				 
 			}
 			else if(pos=="p") {
-    		 	SQL3 = "INSERT INTO indexing (link,word,h1,h2,h3,h4,h5,h6,p,title) VALUES (?,?,?,?,?,?,?,?,?,?)";
+    		 	
 		    	ps = conn.prepareStatement( SQL3, Statement.RETURN_GENERATED_KEYS );
 		    	ps.setString(1, url);
 		    	ps.setString(2, word);
@@ -288,11 +304,13 @@ public class DatabaseConnection {
 		    	ps.setInt(8, 0);
 		    	ps.setInt(9, 1);
 		    	ps.setInt(10, 0);
+		    	ps.setInt(11, 0);
+		    	ps.setInt(12, 0);
 			    	ps.executeUpdate();
 				
 			}
 			else if(pos=="title") {
-    		 	SQL3 = "INSERT INTO indexing (link,word,h1,h2,h3,h4,h5,h6,p,title) VALUES (?,?,?,?,?,?,?,?,?,?)";
+    		 
 		    	ps = conn.prepareStatement( SQL3, Statement.RETURN_GENERATED_KEYS );
 		    	ps.setString(1, url);
 		    	ps.setString(2, word);
@@ -304,15 +322,54 @@ public class DatabaseConnection {
 		    	ps.setInt(8, 0);
 		    	ps.setInt(9, 0);
 		    	ps.setInt(10, 1);
+		    	ps.setInt(11, 0);
+		    	ps.setInt(12, 0);
+			    	ps.executeUpdate();
+				
+			}
+			else if(pos=="i") {
+	    		 
+		    	ps = conn.prepareStatement( SQL3, Statement.RETURN_GENERATED_KEYS );
+		    	ps.setString(1, url);
+		    	ps.setString(2, word);
+		    	ps.setInt(3, 0);
+		    	ps.setInt(4, 0);
+		    	ps.setInt(5, 0);
+		    	ps.setInt(6, 0);
+		    	ps.setInt(7, 0);
+		    	ps.setInt(8, 0);
+		    	ps.setInt(9, 0);
+		    	ps.setInt(10, 0);
+		    	ps.setInt(11, 1);
+		    	ps.setInt(12, 0);
+			    	ps.executeUpdate();
+				
+			}
+			else if(pos=="b") {
+	    		 
+		    	ps = conn.prepareStatement( SQL3, Statement.RETURN_GENERATED_KEYS );
+		    	ps.setString(1, url);
+		    	ps.setString(2, word);
+		    	ps.setInt(3, 0);
+		    	ps.setInt(4, 0);
+		    	ps.setInt(5, 0);
+		    	ps.setInt(6, 0);
+		    	ps.setInt(7, 0);
+		    	ps.setInt(8, 0);
+		    	ps.setInt(9, 0);
+		    	ps.setInt(10, 0);
+		    	ps.setInt(11, 0);
+		    	ps.setInt(12, 1);
 			    	ps.executeUpdate();
 				
 			}
 	     }
 		
 	}
-	static public String getFirstUnIndexed() throws SQLException {
-		String SQL="SELECT Link FROM url WHERE doneIndexing =0 LIMIT 1";
+	static public String getFirstUnIndexed(int num) throws SQLException {
+		String SQL="SELECT Link FROM url WHERE doneIndexing =0 and startIndexing=0 LIMIT ?,1";
 		PreparedStatement ps= conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
+		ps.setInt(1, num-1);
 	     ResultSet rs = ps.executeQuery();
 	     String  url=null;
 	     if ( rs.next() ) {
@@ -320,12 +377,108 @@ public class DatabaseConnection {
 	}
 		    return url;
 	}
+	static public void setStartIndexing(String url)  throws SQLException {
+		String SQL="UPDATE url set startIndexing=1 WHERE link=?";
+		PreparedStatement ps = conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
+    	ps.setString(1, url);
+    	ps.executeUpdate();
+		
+	}
 	static public void SetDoneIndexing(String url) throws SQLException {
 		String SQL="UPDATE url set doneIndexing=1 WHERE link=?";
 		PreparedStatement ps = conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
     	ps.setString(1, url);
     	ps.executeUpdate();
 	}
+	static public boolean isThreadStateEmpty()throws SQLException{
+		String SQL="SELECT count(*) FROM threadstate ";
+		PreparedStatement ps= conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
+	     ResultSet rs = ps.executeQuery();
+	     int n=0;
+	     if ( rs.next() ) {
+	    	    n = rs.getInt(1);
+	    	    if(n>0)
+	    	    	return true;
+	    	    else 
+	    	    	return false;
+	     }
+	     return false;
+		
+	}
+	static public String getThreadUrl(int ThreadNo) throws SQLException{
+		String SQL ="SELECT link FROM threadstate WHERE ThreadNo=? ";
+		PreparedStatement ps= conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
+		ps.setInt(1, ThreadNo);
+		ResultSet rs=ps.executeQuery();
+		String  url=null;
+	     if ( rs.next() ) {
+	    	    url= rs.getString(1);
+	}
+	     return url;
+	}
+	static public void saveThreadState(int ThreadNo,String url) throws SQLException {
+		String SQL="SELECT count(*) FROM threadstate WHERE ThreadNo=?";
+		PreparedStatement ps= conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
+		ps.setInt(1, ThreadNo);
+		ResultSet rs=ps.executeQuery();
+		 int n=0;
+	     if ( rs.next() ) {
+	    	    n = rs.getInt(1);
+	    	    //UPDATE the state of the thread
+	    	    if(n>0) {
+	    	    	SQL="UPDATE threadstate set Link=? WHERE ThreadNo=?";
+	    			ps = conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
+	    	    	ps.setString(1, url);
+	    	    	ps.setInt(2, ThreadNo);
+	    	    	ps.executeUpdate();
+	    	    }
+	    	    //Save the initial state of thread
+	    	    else {
+	    	    	// 	 String SQL2 = "INSERT INTO url (Link,inBound,outBound,doneIndexing) VALUES (?,?,?,?)";
+	    	    	SQL="INSERT INTO threadstate (ThreadNo,Link) VALUES (?,?)";
+	    			ps = conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
+	    	    	ps.setInt(1, ThreadNo);
+	    	    	ps.setString(2, url);
+	    	    	ps.executeUpdate();
+	    	    	
+	    	    }
+	    	    	
+	     }
+	    
+	}
+	//delete all words in indexing table that there links aren't done indexing 
+	static public void deleteNonDoneIndexingWords() throws SQLException {
+		String SQL="SELECT Link FROM url WHERE doneIndexing =0 and startIndexing=1 LIMIT 5";
+		PreparedStatement ps= conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
+		 ResultSet rs = ps.executeQuery();
+		     String  urls=null;
+		     if ( rs.next() ) {
+		    	    urls= rs.getString(1);
+		}
+		if(urls==null)
+			return;
+		SQL="DELETE FROM indexing WHERE link IN (?)";
+		ps= conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
+		ps.setString(1, urls);
+		ps.executeUpdate();
+		//set all the start indexing to 0
+		SQL="UPDATE url set startIndexing=0 WHERE doneIndexing=0 and startIndexing=1";
+		ps= conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
+		ps.executeUpdate();
+	}
+	static public void dropIndexingTable() throws SQLException {
+		//drop table
+		String SQL="DELETE FROM indexing";
+		PreparedStatement ps= conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
+		ps.executeUpdate();
+		
+	}
+	static public void resetDoneAndStartIndexing() throws SQLException {
+		String SQL ="UPDATE url set doneIndexing=0 and startIndexing=0";
+		PreparedStatement ps= conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
+		ps.executeUpdate();
+	}
+
 	//--------------------------------- Ranking Queries -----------------------------//
 	static public int getTotalDocuments() throws SQLException {
 		String SQL="SELECT count(*) FROM url";
