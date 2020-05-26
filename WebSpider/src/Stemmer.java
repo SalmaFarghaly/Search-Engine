@@ -395,6 +395,53 @@ class Stemmer
                 		 if (((char)ch < 'a' || (char)ch > 'z') )
                          {
                 			 indexedOrNot=0;
+                			 break; 
+                         }
+                		
+                	  
+                	ch = Character.toLowerCase((char) ch);
+                    w[k] = (char) ch;
+                    k++;
+           }
+	      if(indexedOrNot==1) {
+	           for (int c = 0; c < j; c++) 
+	             s.add(w[c]);
+	
+	           s.stem();
+	           u = s.toString();
+	           StemmedWords.add(u);
+	           System.out.print("UUUUUUUUUUUUUUUUUU "+u+"\n");
+	      }
+                      
+    
+        }
+        return StemmedWords;
+      
+}
+   
+   public static void main(String[] arg) throws IOException
+   {
+	   BufferedReader consoleReader =  new BufferedReader(new InputStreamReader(System.in)); 
+       // Reading data using readLine 
+       String args= consoleReader.readLine(); 
+      char[] w = new char[501];
+      Stemmer s = new Stemmer();
+      String[]strs=args.split("\\P{Alpha}+");
+      ArrayList<String> StemmedWords=new ArrayList<String>();
+      for(int d=0;d<strs.length;d++) {
+    	  System.out.print("CUREEEEEEENTTTTTTT WORD\n"+strs[d]);
+	      int indexedOrNot=1;
+	      String u="";
+	      int j=strs[d].length();
+	      int k=0;
+	      int ch=0;
+               
+	      for(int p=0;p<j;p++) { 
+                
+                	  	ch = args.charAt(k);
+                		 if (((char)ch < 'a' || (char)ch > 'z') )
+                         {
+                			 indexedOrNot=0;
                 			 break;
 //                       		 System.out.print("The current element is not a character\n");
 //                       			 //split the word here
@@ -419,7 +466,6 @@ class Stemmer
                       
     
         }
-        return StemmedWords;
       
 }
 }

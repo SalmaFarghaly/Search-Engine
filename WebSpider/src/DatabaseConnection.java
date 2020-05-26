@@ -60,12 +60,13 @@ public class DatabaseConnection {
 		    	ps.executeUpdate();
 	     }
 	     else {
-	    	 String SQL2 = "INSERT INTO url (Link,inBound,outBound,doneIndexing) VALUES (?,?,?,?)";
+	    	 String SQL2 = "INSERT INTO url (Link,inBound,outBound,doneIndexing,startIndexing) VALUES (?,?,?,?,?)";
 		    	ps = conn.prepareStatement( SQL2, Statement.RETURN_GENERATED_KEYS );
 		    	ps.setString( 1, discoveredURL);
 		    	ps.setInt(2, 1);
 		    	ps.setInt(3,0);
 		    	ps.setInt(4,0);
+		    	ps.setInt(5,0);
 		    	ps.executeUpdate();
 	     }
 	
@@ -119,12 +120,13 @@ public class DatabaseConnection {
 }
 	
 	static public void saveInitials(String url) throws SQLException {
-    	 String SQL2 = "INSERT INTO url (Link,inBound,outBound,doneIndexing) VALUES (?,?,?,?)";
+    	 String SQL2 = "INSERT INTO url (Link,inBound,outBound,doneIndexing,startIndexing) VALUES (?,?,?,?)";
     		PreparedStatement ps = conn.prepareStatement( SQL2, Statement.RETURN_GENERATED_KEYS );
 	    	ps.setString( 1, url);
 	    	ps.setInt(2, 0);
 	    	ps.setInt(3,0);
 	    	ps.setInt(4,0);
+	    	ps.setInt(5,0);
 	    	ps.executeUpdate();
 	}
 	
@@ -364,15 +366,23 @@ public class DatabaseConnection {
 	     }
 		
 	}
-	static public String getFirstUnIndexed() throws SQLException {
-		String SQL="SELECT Link FROM url WHERE doneIndexing =0 LIMIT 1";
+	static public String getFirstUnIndexed(int num) throws SQLException {
+		String SQL="SELECT Link FROM url WHERE doneIndexing =0 and startIndexing=0 LIMIT ?,1";
 		PreparedStatement ps= conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
+		ps.setInt(1, num-1);
 	     ResultSet rs = ps.executeQuery();
 	     String  url=null;
 	     if ( rs.next() ) {
 	    	    url= rs.getString(1);
 	}
 		    return url;
+	}
+	static public void setStartIndexing(String url)  throws SQLException {
+		String SQL="UPDATE url set startIndexing=1 WHERE link=?";
+		PreparedStatement ps = conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
+    	ps.setString(1, url);
+    	ps.executeUpdate();
+		
 	}
 	static public void SetDoneIndexing(String url) throws SQLException {
 		String SQL="UPDATE url set doneIndexing=1 WHERE link=?";
@@ -438,7 +448,7 @@ public class DatabaseConnection {
 	}
 	//delete all words in indexing table that there links aren't done indexing 
 	static public void deleteNonDoneIndexingWords() throws SQLException {
-		String SQL="SELECT Link FROM url WHERE doneIndexing =0 LIMIT 5";
+		String SQL="SELECT Link FROM url WHERE doneIndexing =0 and startIndexing=1 LIMIT 5";
 		PreparedStatement ps= conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
 		 ResultSet rs = ps.executeQuery();
 		     String  urls=null;
@@ -451,8 +461,10 @@ public class DatabaseConnection {
 		ps= conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
 		ps.setString(1, urls);
 		ps.executeUpdate();
-		
-		
+		//set all the start indexing to 0
+		SQL="UPDATE url set startIndexing=0 WHERE doneIndexing=0 and startIndexing=1";
+		ps= conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
+		ps.executeUpdate();
 	}
 	static public void dropIndexingTable() throws SQLException {
 		//drop table
@@ -461,8 +473,8 @@ public class DatabaseConnection {
 		ps.executeUpdate();
 		
 	}
-	static public void resetDoneIndexing() throws SQLException {
-		String SQL ="UPDATE url set doneIndexing=0 ";
+	static public void resetDoneAndStartIndexing() throws SQLException {
+		String SQL ="UPDATE url set doneIndexing=0 and startIndexing=0";
 		PreparedStatement ps= conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
 		ps.executeUpdate();
 	}

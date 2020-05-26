@@ -39,8 +39,6 @@ public class Parser {
 		for(String token:tokens) {
 			//remove numbers
 			if(is4DigitNumber(token)==true||isNumeric(token)==false) {
-			//remove punctuation marks
-//			token.replaceAll("\\p{Punct}", "");
 			loweredCaseToken=token.toLowerCase();
 			if(!loweredCaseToken.isBlank()&&!loweredCaseToken.isEmpty())
 			tokenList.add(loweredCaseToken);
