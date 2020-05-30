@@ -120,7 +120,7 @@ public class DatabaseConnection {
 }
 	
 	static public void saveInitials(String url) throws SQLException {
-    	 String SQL2 = "INSERT INTO url (Link,inBound,outBound,doneIndexing,startIndexing) VALUES (?,?,?,?)";
+    	 String SQL2 = "INSERT INTO url (Link,inBound,outBound,doneIndexing,startIndexing) VALUES (?,?,?,?,?)";
     		PreparedStatement ps = conn.prepareStatement( SQL2, Statement.RETURN_GENERATED_KEYS );
 	    	ps.setString( 1, url);
 	    	ps.setInt(2, 0);

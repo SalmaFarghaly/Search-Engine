@@ -1,4 +1,5 @@
 import java.io.IOException;
+
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -26,5 +27,11 @@ public class QueryProcessor {
 		 String[] tokens = s.split("\\S");
 		return tokens;
 	}
+	public static List<String> ParsedQuery(String message) throws IOException {
+		Parser.loadStopwords();
+ 		List<String> output = Parser.parse(message);
+ 		return output;
+	}
+	
 }
 	

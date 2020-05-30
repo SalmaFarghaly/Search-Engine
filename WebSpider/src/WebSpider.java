@@ -286,7 +286,7 @@ public class WebSpider{
         //if ThreadState is saved and he want to crawl "1" that means interrupt has occurred
     	if(DatabaseConnection.isThreadStateEmpty()==false||Integer.parseInt(type)==2) {
 	    	try {
-				reader = new BufferedReader(new FileReader("C:\\Users\\Dell\\Desktop\\Apt project\\seedlist.txt"));
+				reader = new BufferedReader(new FileReader("C:\\Users\\Lenovo\\git\\Search-Engine1\\seedlist.txt"));
 				String line = reader.readLine();
 				while (line != null) {
 					System.out.println(line);
