@@ -52,6 +52,7 @@ public class Indexer {
     	System.out.println("Enter You want to re-index or index: (1) index (2) re-index");
     	 BufferedReader consoleReader =  new BufferedReader(new InputStreamReader(System.in)); 
         // Reading data using readLine 
+
     	 String type = consoleReader.readLine(); 
         
         //check if he wants to re-index the content or not

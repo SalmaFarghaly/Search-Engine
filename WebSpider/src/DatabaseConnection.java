@@ -478,6 +478,13 @@ public class DatabaseConnection {
 		PreparedStatement ps= conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
 		ps.executeUpdate();
 	}
+	static public void updateIDIncrementally() throws SQLException{
+		String SQL ="select @i := 0\n" + 
+				"update bar set c = (select @i := @i + 1);";
+		PreparedStatement ps= conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
+		ps.executeUpdate();
+		
+	}
 
 	//--------------------------------- Ranking Queries -----------------------------//
 	static public int getTotalDocuments() throws SQLException {
@@ -522,6 +529,85 @@ public class DatabaseConnection {
 	    	  
 	     }
 	      return DocLengthmap;
+	}
+	static public int getOutboundCount(int id) throws SQLException {
+		String SQL="SELECT outBound FROM url WHERE id= ?";
+		PreparedStatement ps= conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
+		ps.setInt(1, id);
+		ResultSet rs = ps.executeQuery();
+		int n =-1;
+		String x = null;
+	     if ( rs.next() ) {
+	    	  n=rs.getInt(1);
+	     }
+		return n;
+		
+	}
+	static public List<Integer> getOutBoundLinks(int id) throws SQLException {
+		List<Integer> outBoundLinks= new ArrayList<Integer>();
+		int i=0;
+		String link=null;
+		String SQL="SELECT link FROM url WHERE id= ? ";
+		PreparedStatement ps= conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
+		ps.setInt(1, id);
+		ResultSet rs = ps.executeQuery();
+		if(rs.next()) {
+			link=rs.getString(1);
+		}
+		SQL="SELECT discoveredURL FROM bounds WHERE url= ?";
+		ps= conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
+		ps.setString(1, link);
+		rs = ps.executeQuery();
+		String urls=null;
+		if(rs.next()) {
+			urls=rs.getString(1);
+			i++;
+		}
+		SQL="SELECT id FROM url WHERE link IN (?)";
+		ps= conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
+		ps.setString(1, urls);
+		rs = ps.executeQuery();
+		i=0;
+		while(rs.next()) {
+			outBoundLinks.add(rs.getInt(1));
+			i++;
+		}
+		
+		return outBoundLinks;
+	}
+	//get document id given it's url
+	static public int getDocumentID (String url) throws SQLException {
+		String SQL="SELECT id from url WHERE link=?";
+		PreparedStatement ps= conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
+		ps.setString(1, url);
+		int n=-1;
+		ResultSet rs = ps.executeQuery();
+		if(rs.next()) {
+			n=rs.getInt(1);
+		}
+		return n;
+	}
+	static public void savePageRank(int id,double pageRank) throws SQLException {
+		String SQL="UPDATE url set rank=? WHERE id=?";
+		PreparedStatement ps= conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
+		ps.setDouble(1, pageRank);
+		ps.setInt(2, id);
+		ps.executeUpdate();
+	}
+//	//get all edges to construct graph
+//	static public void getEdges() {
+//		
+//	}
+	public static double getLinkPageRank(String key) throws SQLException {
+		// TODO Auto-generated method stub
+		String SQL="Select rank FROM url WHERE Link= '"+key+"'";
+		PreparedStatement ps= conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
+		ResultSet rs = ps.executeQuery();
+		double d = 0;
+		if(rs.next()) {
+			d=rs.getDouble(1);
+		}
+		return d;
 	}
 }
 
