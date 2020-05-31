@@ -1,10 +1,19 @@
 import java.io.IOException;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
+
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.jsoup.Jsoup;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -38,13 +47,13 @@ public class Ranker {
 	    	getTotalDocuments();
 	   
 	   // check if it is a phrase searching case or normal search
-	    String s =  QueryProcessor.SetOriginalQuery();
-	    if( s.startsWith("\"") & s.endsWith("\"")) { // it is a phrase searching case
-	    	CalcTfIDF (s);
-	    	PhraseSearching(s);
+	    String QueryWord =  QueryProcessor.SetOriginalQuery();
+	    if( QueryWord.startsWith("\"") & QueryWord.endsWith("\"")) { // it is a phrase searching case
+	    	CalcTfIDF (QueryWord);
+	    	PhraseSearching(QueryWord);
 	    } 
 	    else { // will make normal search
-	    	CalcTfIDF (s);
+	    	CalcTfIDF (QueryWord);
 	    }
 		 System.out.print("-------------------Showing all results----------------------");
 		 System.out.print("\r\n");
@@ -70,12 +79,84 @@ public class Ranker {
             
     } 
 		
-	private static void PhraseSearching(String s) {
+	private static void PhraseSearching(String s) throws IOException {
 	    String QueryWithoutQuotes =s.replaceAll("^\"+|\"+$", "");
-		
-	}
+	    for (Entry<String, Double> entry : Docs.entrySet())  {
+	    	String url =  entry.getKey();
+        	Document  doc = Jsoup.connect(url).get();
+        	Elements words = doc.select("h1, h2, h3, h4, h5, h6,p,title,i,b");
+        	List<String> TagsInfo = words.select("i").eachText();
+        	String italicInfo = getDocumentinfo(TagsInfo);
+        	TagsInfo = null;TagsInfo = words.select("h1").eachText();
+        	String h1Info = getDocumentinfo(TagsInfo);
+        	TagsInfo = null;TagsInfo = words.select("h2").eachText();
+        	String h2Info = getDocumentinfo(TagsInfo);
+        	TagsInfo = null;TagsInfo = words.select("h3").eachText();
+        	String h3Info = getDocumentinfo(TagsInfo);
+        	TagsInfo = null;TagsInfo = words.select("h4").eachText();
+        	String h4Info = getDocumentinfo(TagsInfo);
+        	TagsInfo = null;TagsInfo = words.select("h5").eachText();
+        	String h5Info = getDocumentinfo(TagsInfo);
+        	TagsInfo = null;TagsInfo = words.select("h6").eachText();
+        	String h6Info = getDocumentinfo(TagsInfo);
+        	TagsInfo = null;TagsInfo = words.select("b").eachText();
+        	String boldInfo = getDocumentinfo(TagsInfo);
+        	TagsInfo = null;TagsInfo = words.select("p").eachText();
+        	String paragraphInfo = getDocumentinfo(TagsInfo);
+        	TagsInfo = null;TagsInfo = words.select("title").eachText();
+        	String titleInfo = getDocumentinfo(TagsInfo);
+        	double titleFreq = 0,paragraphFreq = 0,h1Freq = 0,h2Freq = 0,h3Freq = 0,
+        	h4Freq = 0,h5Freq = 0,h6Freq = 0,boldFreq = 0,italicFreq = 0;
+        	titleFreq =  getFreqREGEX ( QueryWithoutQuotes,titleInfo);
+        	h1Freq =  getFreqREGEX ( QueryWithoutQuotes,h1Info);
+        	h2Freq =  getFreqREGEX ( QueryWithoutQuotes,h2Info);
+        	h3Freq =  getFreqREGEX ( QueryWithoutQuotes,h3Info);
+        	h4Freq =  getFreqREGEX ( QueryWithoutQuotes,h4Info);
+        	h5Freq =  getFreqREGEX ( QueryWithoutQuotes,h5Info);
+        	h6Freq =  getFreqREGEX ( QueryWithoutQuotes,h6Info);
+        	italicFreq =  getFreqREGEX ( QueryWithoutQuotes,italicInfo);
+        	boldFreq =  getFreqREGEX ( QueryWithoutQuotes,boldInfo);
+        	paragraphFreq =  getFreqREGEX ( QueryWithoutQuotes,paragraphInfo);
+        	System.out.println("Frequency for url: "+url+" "+titleFreq+" "+ h1Freq+" "+h2Freq+" "+h3Freq+" "+h4Freq+" "+h5Freq+" "+h6Freq+" "+paragraphFreq+" "+italicFreq);
+        	double total =  (double) ( (title_weight*titleFreq) + (h1_weight*h1Freq) + (h2_weight*h2Freq) + (h3_weight*h3Freq) + (h4_weight*h4Freq) + 
+        			(h5_weight*h5Freq) + (h6_weight*h6Freq) + (italic_weight*italicFreq) + (bold_weight*boldFreq) + (p_weight*paragraphFreq) )   ;
+        	System.out.println("total: "+total);
+        	if(total ==0) {
+        		Docs.put(url, (double) 0);
+        	}
+        	else {
+        		Double value = entry.getValue();
+        		value = value + total;
+        		Docs.put(url, value);
+        	}
+        		
+        	
+	    }
 
-    private static void CalcTfIDF (String s) throws SQLException, IOException {
+	    Docs.values().removeIf(value -> value == 0.0);
+	        
+	   }
+	  
+
+    private static String getDocumentinfo(List<String> tagsinfo) {
+		// TODO Auto-generated method stub
+    	StringBuilder d = new StringBuilder();
+		for(int i=0; i<tagsinfo.size(); i++) {
+			d.append(tagsinfo.get(i));
+			d.append(" ");
+		}
+		String res = d.toString();
+    	return res;
+	}
+    
+    private static double getFreqREGEX (String patternToBeMatched,String doc) {
+    	Pattern pattern = Pattern.compile(patternToBeMatched);
+		Matcher matcher = pattern.matcher(doc);
+		double matches = matcher.results().count();
+		return matches;
+    }
+
+	private static void CalcTfIDF (String s) throws SQLException, IOException {
 	       List<String> inputString = QueryProcessor.ParsedQuery(s);
 	    	for(int i=0; i<inputString.size(); i++) {
 	    		getFilteredDocuments(inputString.get(i));
@@ -198,7 +279,7 @@ public class Ranker {
 			 System.out.print("\r\n");
 		 }
 		 // To be removed
-		 System.out.print("-------------------Showing all results----------------------");
+		 System.out.print("-------------------Showing all Normal Search results----------------------");
 		 System.out.print("\r\n");
 	     System.out.println(entriesSortedByValues(Docs));
 					
