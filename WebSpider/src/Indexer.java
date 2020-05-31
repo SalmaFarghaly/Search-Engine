@@ -42,11 +42,25 @@ public class Indexer {
 		index4.start();
 		Thread index5=new Index(++ThreadNo,dummy);
 		index5.start();
+//		Thread index6=new Index(++ThreadNo,dummy);
+//		index6.start();
+//		Thread index7=new Index(++ThreadNo,dummy);
+//		index7.start();
+//		Thread index8=new Index(++ThreadNo,dummy);
+//		index8.start();
+//		Thread index9=new Index(++ThreadNo,dummy);
+//		index9.start();
+//		Thread index10=new Index(++ThreadNo,dummy);
+//		index10.start();
+//		Thread index11=new Index(++ThreadNo,dummy);
+//		index11.start();
 	}
 
 
     public static void main(String[] args) throws IOException, SQLException {
-		//Connect to DataBase
+		//clear cache
+    	java.util.ResourceBundle.clearCache(); 
+    	//Connect to DataBase
     	DatabaseConnection.DatabaseConnect();
 
     	System.out.println("Enter You want to re-index or index: (1) index (2) re-index");
@@ -67,8 +81,11 @@ public class Indexer {
         else{
         	DatabaseConnection.deleteNonDoneIndexingWords();
         }
+        consoleReader.close();
         Parser.loadStopwords();
     	Indexer indexer=new Indexer();
+    	DatabaseConnection.updateIDIncrementally();
+    	Ranker.calculatePageRank();
     	
     }
     private static class Index extends Thread{
@@ -85,61 +102,107 @@ public class Indexer {
 			
 			//create 5 threads
 			String url = null ;
-			while(url==null) {
-				
+			int i=0;
+			while(i==0||url!=null) {
+				i++;
 				synchronized(this.dummy) {
 					try {
 						url=DatabaseConnection.getFirstUnIndexed(this.ThreadNo);
+						if(url!=null)
+						DatabaseConnection.setStartIndexing(url.toString());
 					} catch (SQLException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
-			 Document doc=null;
+			
 				 while(url!=null) {
-					System.out.print(this.ThreadNo +"   The current urllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll\n "+url+"\n");
-					x++;
-					System.out.print("["+x+"/"+totalDocuments+"] The current url "+url+"\n");
+					 Document doc=null;
+					 System.out.print(this.ThreadNo +"   The current urllllllllllllllllllllllll  "+url+"\n");
 					 try {
 						doc = Jsoup.connect(url).timeout(180000).ignoreHttpErrors(true).get();
 					} catch (IOException e) {
+//						try {
+////							DatabaseConnection.SetDoneIndexing(url);
+//						} catch (SQLException e1) {
+//							// TODO Auto-generated catch block
+//							e1.printStackTrace();
+//						}
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					if(doc!=null) {
-						synchronized(this.dummy) {
-							try {
-								DatabaseConnection.setStartIndexing(url.toString());
-							} catch (SQLException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-						}
 						Elements words = doc.select("h1, h2, h3, h4, h5, h6,p,title,i,b");
-						java.util.List<String> h1Tags = words.select("h1").eachText();
-						stemAndRemoveStopWords(h1Tags,url,"h1");
-						java.util.List<String> h2Tags = words.select("h2").eachText();
-						stemAndRemoveStopWords(h2Tags,url,"h2");
-						java.util.List<String> h3Tags = words.select("h3").eachText();
-						stemAndRemoveStopWords(h3Tags,url,"h3");
-						java.util.List<String> h4Tags = words.select("h4").eachText();
-						stemAndRemoveStopWords(h4Tags,url,"h4");
-						java.util.List<String> h5Tags = words.select("h5").eachText();
-						stemAndRemoveStopWords(h5Tags,url,"h5");
-						java.util.List<String> h6Tags = words.select("h6").eachText();
-						stemAndRemoveStopWords(h6Tags,url,"h6");
-						java.util.List<String> p = words.select("p").eachText();
-						stemAndRemoveStopWords(p,url,"p");
-						java.util.List<String> titleTags = words.select("title").eachText();
-						stemAndRemoveStopWords(titleTags,url,"title");
-						java.util.List<String> italicTags = words.select("i").eachText();
-						stemAndRemoveStopWords(italicTags,url,"i");
-						java.util.List<String> boldTags = words.select("b").eachText();
-						stemAndRemoveStopWords(boldTags,url,"b");
+						ArrayList<Word> tokens=new ArrayList<Word>();
+						try {
+						Elements h1Tags = words.select("h1");
+						String textH1=h1Tags.text();
+//						System.out.print("H1Tagssssssssssssssssssssssssssssssssssss\n"+textH1+"\n");
+						if(!textH1.isEmpty()&&!textH1.isBlank())
+							stemAndRemoveStopWords(textH1,url,"h1",tokens);
+						Elements h2Tags = words.select("h2");
+						String textH2=h1Tags.text();
+//						System.out.print("H2Tagssssssssssssssssssssssssssssssssssss\n"+textH2+"\n");
+						if(!textH2.isEmpty()&&!textH2.isBlank())
+							stemAndRemoveStopWords(textH2,url,"h2",tokens);
+						Elements h3Tags = words.select("h3");
+						String textH3=h3Tags.text();
+//						System.out.print("H3Tagssssssssssssssssssssssssssssssssssss\n"+textH3+"\n");
+						if(!textH3.isEmpty()&&!textH3.isBlank())
+							stemAndRemoveStopWords(textH3,url,"h3",tokens);
+						Elements h4Tags = words.select("h4");
+						String textH4=h4Tags.text();
+//						System.out.print("H4Tagssssssssssssssssssssssssssssssssssss\n"+textH4+"\n");
+						if(!textH4.isEmpty()&&!textH4.isBlank())
+							stemAndRemoveStopWords(textH4,url,"h4",tokens);
+						Elements h5Tags = words.select("h5");
+						String textH5=h5Tags.text();
+//						System.out.print("H5Tagssssssssssssssssssssssssssssssssssss\n"+textH5+"\n");
+						if(!textH5.isEmpty()&&!textH5.isBlank())
+							stemAndRemoveStopWords(textH5,url,"h5",tokens);
+						Elements h6Tags = words.select("h6");
+						String textH6=h6Tags.text();
+//						System.out.print("H6Tagssssssssssssssssssssssssssssssssssss\n"+textH6+"\n");
+						if(!textH6.isEmpty()&&!textH6.isBlank())
+							stemAndRemoveStopWords(textH6,url,"h6",tokens);
+						Elements p = words.select("p");
+						String textp=p.text();
+//						System.out.print("ppppppppppppppppppppppppppppppppppppppppppppp\n"+textp+"\n");
+						if(!textp.isEmpty()&&!textp.isBlank())
+							stemAndRemoveStopWords(textp,url,"p",tokens);
+						Elements titleTags = words.select("title");
+						String textTitle=titleTags.text();
+//						System.out.print("textTitlleeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee\n"+textTitle+"\n");
+						if(!textTitle.isEmpty()&&!textTitle.isBlank())
+							stemAndRemoveStopWords(textTitle,url,"title",tokens);
+						Elements italicTags = words.select("i");
+						String textItalic=italicTags.text();
+//						System.out.print("textItaliccccccccccccccccccccccccccccccccccccccc\n"+textItalic+"\n");
+						if(!textItalic.isEmpty()&&!textItalic.isBlank())
+							stemAndRemoveStopWords(textItalic,url,"i",tokens);
+						Elements boldTags = words.select("b");
+						String textBold=boldTags.text();
+//						System.out.print("textBolldddddddddddddddddddddddddddddddddddddddddddd\n"+textBold+"\n");
+						if(!textBold.isEmpty()&&!textBold.isBlank())
+							stemAndRemoveStopWords(textBold,url,"b",tokens);
+						}
+						catch(Exception e) {
+							
+						}
+						
+						try {
+							if(tokens.isEmpty()==false)
+							DatabaseConnection.addWords(tokens, url);
+						} catch (SQLException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						
+						//document.title
 					}
 					
 					//set done indexing to 1
-					synchronized(this.dummy) {
+					
 						try {
 							if(doc!=null)
 							DatabaseConnection.SetDoneIndexing(url);
@@ -147,8 +210,13 @@ public class Indexer {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
+						
+						//get first un-indexed url to index it
+						synchronized(this.dummy) {
 						try {
 							url = DatabaseConnection.getFirstUnIndexed(this.ThreadNo);
+							if(url!=null)
+							DatabaseConnection.setStartIndexing(url.toString());
 						} catch (SQLException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -158,43 +226,26 @@ public class Indexer {
 			}
 			
 		}
-			public void stemAndRemoveStopWords(java.util.List<String>Tags,String url,String pos){
-				
-				System.out.print("Tags\n"+Tags+"\n");
-				//Loop on the sentences 
-				for(int i=0;i<Tags.size();i++) {
-					System.out.print("Tags\n"+Tags.get(i)+"\n");
-					//for every sentence get the words in it and remove the stop words.
-					java.util.List<String> parsedWords=null;
-					try {
-						parsedWords = Parser.parse(Tags.get(i));
-					} catch (IOException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-					System.out.print("STEMMEDDDDDDDWords"+parsedWords+"\n");
-					String currentStr=null;
-					// loop on the words that in parsed words array after removing the stop words
-					for(int j=0;j<parsedWords.size();j++) {
-						currentStr=parsedWords.get(j);
-						System.out.print("CurrenttttWordddddd   "+currentStr+"\n");
-							System.out.print(currentStr+" Savedd in the database............................\n");
-						if(!currentStr.isEmpty()&&!currentStr.isBlank()) {
-							try {
-								DatabaseConnection.addStemmedWord(currentStr, url, pos);
-							} catch (SQLException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
+			public void stemAndRemoveStopWords(String Tags,String url,String pos,ArrayList<Word> tokens) throws IOException, SQLException{
+				ArrayList<String> stemmedWords=Parser.parse(Tags);
+				int exist=0;
+				for(int i=0;i<stemmedWords.size();i++) {
+					for(int j=0;j<tokens.size();j++) {
+						if(stemmedWords.get(i).equals(tokens.get(j).word)==true) {
+							tokens.get(j).incrementOccurence(pos);
+							exist=1;
+							break;
 						}
+						
 					}
+					if(exist==0) {
+						Word token=new Word(stemmedWords.get(i));
+						token.incrementOccurence(pos);
+						tokens.add(token);
+					}
+					exist=0;
 				}
 				
-			}
-
-			
-			
-		
-    }
-
+		}
+}
 }

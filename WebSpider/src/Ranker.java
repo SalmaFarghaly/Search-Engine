@@ -27,6 +27,7 @@ import java.util.Comparator;
 public class Ranker {
 	static int totalDocuments = 0;
 	private static List<ArrayList<Integer>> adjList;
+
 	static List<String> URLs = new ArrayList<String>(),URLsMoreWords;
 	static Map< String,Double> Docs =  new HashMap< String,Double>(); 
 	static Connection conn;
@@ -39,7 +40,7 @@ public class Ranker {
 			h2= new ArrayList<Integer>(),h3= new ArrayList<Integer>(),
 			h4= new ArrayList<Integer>(),h5= new ArrayList<Integer>(),
 			h6= new ArrayList<Integer>(),p= new ArrayList<Integer>();
-	
+
 	 public static void main(String[] args) throws IOException, SQLException {
 			//Connect to DataBase
 	    	DatabaseConnection.DatabaseConnect();
@@ -180,6 +181,7 @@ public class Ranker {
 
 		// TODO Auto-generated method stub
 		int Docs_Contain_term = 0;
+
 		URLsMoreWords = new ArrayList<String>();
 		
 				
@@ -220,6 +222,7 @@ public class Ranker {
 	    	  else {
 	    		 URLsMoreWords.add(s);
 	    		 int index = URLs.indexOf(s);///---- continue here
+
 	    		 //TF.add(index,tfCount);
 	    		 Title.add(index,title);
 			     h1.add(index,h11);
@@ -265,6 +268,7 @@ public class Ranker {
 				Docs.put(URL, tfIdf);
 			 }
 			 else {
+
 				  
 				  System.out.print("\r\n");
 			//	 int index = Documents.indexOf(d);
@@ -273,6 +277,7 @@ public class Ranker {
 				  D += tfIdf;
 				  D = D*2;
 				  System.out.print(" tfidf new"+D);
+
 				  Docs.put(URL, D); // check mappp
 				
 			 }
@@ -334,6 +339,7 @@ public class Ranker {
 		}
 	}
 	public static void calculatePageRank() throws SQLException {
+		getTotalDocuments();
 		int nodeCount=totalDocuments;
 		//create adjacnency list
 		createAdjList(nodeCount);
@@ -379,17 +385,22 @@ public class Ranker {
 			pageRank = newPageRankArray;
 			iteration++;
 		}while(!didConverge(iteration,pageRank,old_pageRank));
-		for(int i=0;i<nodeCount;i++)
-			System.out.print(pageRank[i]+"\n");
+//		for(int i=0;i<nodeCount;i++)
+//			System.out.print(pageRank[i]+"\n");
 		
 		//save page Rank in database
 		for(int i=0;i<nodeCount;i++) {
 			DatabaseConnection.savePageRank(i, pageRank[i]);
+			System.out.print(i+"   "+pageRank[i]+"\n");
 		}
+			System.out.print("TERMINATEDDD\n");
 	}
 	public static void getTotalDocuments() throws SQLException {
 		totalDocuments= DatabaseConnection.getTotalDocuments();
 	}
+	
+	
+
 	
 
 		
@@ -399,3 +410,8 @@ public class Ranker {
 	
 	
 }
+
+
+
+
+

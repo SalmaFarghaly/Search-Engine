@@ -31,14 +31,17 @@ public class WebSpider{
     //lock
     public Integer dummy=1;
     
-    //maximum links is 5000
+    
     public int count =0;
+    //maximum number of links saved in database
+    public int threshold=10000;
 
     //startURL is seed set
     private WebSpider(final ArrayList<URL> list,int type) throws SQLException, MalformedURLException {
         this.startTime = System.currentTimeMillis();
         count=list.size();
-        if(type!=2) {
+        //check that it was first time to run crawler
+        if(type==1&&DatabaseConnection.isThreadStateEmpty()==true) {
 	       for(URL url :list){
 	    	   DatabaseConnection.saveInitials(url.toString());
 	       }
@@ -51,6 +54,8 @@ public class WebSpider{
     	int i=1;
     	System.out.print(URLS);
     	//crawling the seedList
+    	int urlCnt=DatabaseConnection.getCountUrl();
+    	//first time to run crawler , database is empty (i.e No links)
     	if(URLS.isEmpty()==false) {
 	    	for(URL url:URLS) {
 	    		System.out.print("THread NO "+i+"created \n");
@@ -58,7 +63,8 @@ public class WebSpider{
 	    		i++;
 	    	}
     	}
-    	else {
+    	// the crawler was interrupted , and we retrieve the state of each thread and start it
+    	else if(urlCnt<threshold) {
     		String url=DatabaseConnection.getThreadUrl(i);
     		while(url!=null) {
     			System.out.print("THread NO "+i+"created \n");
@@ -68,6 +74,7 @@ public class WebSpider{
     		}
     		
     	}
+    	//else means the db is filled with it's threshold , so we have to terminate the program
   }
 
 
@@ -83,6 +90,8 @@ public class WebSpider{
      	Integer dummy=1;
      	///thread number
      	int threadNo;
+     	//max number of links
+        public int threshold=10000;
     	
     	public Crawl(URL url,Integer d, int num) {
     		this.link=url;
@@ -96,7 +105,7 @@ public class WebSpider{
     	int i=0;
     	URL currentURL=null;
     	int countURLS=0;
-    	while(newURLS.isEmpty()==false&& countURLS<10000) {
+    	while(newURLS.isEmpty()==false&& countURLS<threshold) {
 
     		
 	        currentURL=this.newURLS.get(0);
@@ -146,7 +155,7 @@ public class WebSpider{
 		        	  try {
 		      
 		              
-					  if(DatabaseConnection.isLinkExist(parts[0])==false&&countURLS<10000){
+					  if(DatabaseConnection.isLinkExist(parts[0])==false&&countURLS<threshold){
 						  	this.newURLS.add(new URL(parts[0]));
 						  	this.count++;
 					  }
@@ -154,7 +163,7 @@ public class WebSpider{
 						synchronized(this.dummy) 
 						{
 
-			              if(countURLS<10000&&DatabaseConnection.isRelationExist(currentURL.toString(), parts[0])==0) {
+			              if(countURLS<threshold&&DatabaseConnection.isRelationExist(currentURL.toString(), parts[0])==0) {
 			            	  //lock table
 			              	DatabaseConnection.incrementInBound(parts[0]);
 			              	DatabaseConnection.insertDocument(currentURL.toString(),parts[0]);
@@ -162,7 +171,7 @@ public class WebSpider{
 			              	//unlock table
 			              }
 			           
-			              else if(countURLS>=10000)
+			              else if(countURLS>=threshold)
 			              	break;
 			        	  }
 		        	  }

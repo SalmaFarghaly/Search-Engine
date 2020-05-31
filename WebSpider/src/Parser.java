@@ -1,9 +1,11 @@
 
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -26,45 +28,36 @@ public class Parser {
 
 	public static void loadStopwords() throws IOException {
 		
-	    stopWords = Files.readAllLines(Paths.get("C:\\Users\\Lenovo\\git\\Search-Engine1\\WebSpider\\english_stopwords.txt"));
+	    stopWords = Files.readAllLines(Paths.get("C:\\Users\\Dell\\git\\repository\\WebSpider\\english_stopwords.txt"));
 	    System.out.print("stopWords\n"+stopWords+"\n");
 	}
 
-	public static List<String> parse(String doc) throws IOException {
-		List<String> tokenList = new ArrayList<String>();
-		String[] tokens = doc.toString().split("[^a-zA-Z0-9'-]");
-		System.out.print("TOKENNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN\n");
-		System.out.print(Arrays.toString(tokens));
-		String loweredCaseToken=null;
+	public static ArrayList<String> parse(String text) throws IOException {
+		String[] tokens = text.split("[^a-zA-Z0-9'-]");
+//		System.out.print("TTTTTTTTTTTTTTTTTTTTTTTTTOOOOOOOOOOOOOOOOOOKKKKKKKKKKKKKKKKKKKKKKKEEEEEEEENS\n");
+//		for(int i=0;i<tokens.length;i++) {
+//			System.out.print(" "+tokens[i]+" ");
+//		}
+		ArrayList<String> stemmedTokens=new ArrayList<String>();
 		for(String token:tokens) {
-			//remove numbers
-			if(is4DigitNumber(token)==true||isNumeric(token)==false) {
-			loweredCaseToken=token.toLowerCase();
-			if(!loweredCaseToken.isBlank()&&!loweredCaseToken.isEmpty())
-			tokenList.add(loweredCaseToken);
-			}
 			
-			
-		}
-		//remove stop word
-		ArrayList<String> WordsAfterStemming=new ArrayList<String>();
-		removeStopWords(tokenList);
-		for(String token:tokenList) {
-			if(is4DigitNumber(token)==true) {
-				WordsAfterStemming.add(token);
-			}
+			token.toLowerCase();
+			if(stopWords.contains(token)==true)
+				continue;
+			//if it is 4 digit number like birth date save it but without stemming
+			if(is4DigitNumber(token)==true)
+				stemmedTokens.add(token);
+			// if it is numeric but not a 4-digit number don't save it or if it is one character word it has no meaning so don't save it
+			else if (isNumeric(token)==true||token.length()==1)
+				continue;	
 			else {
-				ArrayList<String> stemmedWords=Stemmer.Stemming(token);
-				for(String word:stemmedWords) {
-					if(!word.isEmpty()&&!word.isBlank())
-						WordsAfterStemming.add(word);	
-				}
+				String result = Stemmer.Stemming(token);
+				if(result.isEmpty()==false&&result.isBlank()==false&&result!=null&&isNumeric(result)==false)
+					stemmedTokens.add(result);
 			}
-				
 		}
-		return WordsAfterStemming;
+		return stemmedTokens;
 	}
-	//check if this string can be parsed to string
 	
 	public static boolean isNumeric(String str) {
 		try {
@@ -93,6 +86,14 @@ public class Parser {
 	// removing the stop words from the tokens
 	public static void removeStopWords(List<String> inputList) {
 		inputList.removeIf(ip -> stopWords.contains(ip));
+	}
+	
+	public static void main(String[] arg) throws IOException
+	{
+		   BufferedReader consoleReader =  new BufferedReader(new InputStreamReader(System.in)); 
+	    // Reading data using readLine 
+	    String args= consoleReader.readLine(); 
+	    parse(args);
 	}
 
 }

@@ -11,6 +11,8 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+
+//=================This class contains all the daatbase queries=======================//
 public class DatabaseConnection {
 	
 	
@@ -60,13 +62,15 @@ public class DatabaseConnection {
 		    	ps.executeUpdate();
 	     }
 	     else {
-	    	 String SQL2 = "INSERT INTO url (Link,inBound,outBound,doneIndexing,startIndexing) VALUES (?,?,?,?,?)";
+	    	 String SQL2 = "INSERT INTO url (Link,inBound,outBound,doneIndexing,startIndexing,id,rank) VALUES (?,?,?,?,?,?,?)";
 		    	ps = conn.prepareStatement( SQL2, Statement.RETURN_GENERATED_KEYS );
 		    	ps.setString( 1, discoveredURL);
 		    	ps.setInt(2, 1);
 		    	ps.setInt(3,0);
 		    	ps.setInt(4,0);
 		    	ps.setInt(5,0);
+		    	ps.setInt(6,0);
+		    	ps.setInt(7,0);
 		    	ps.executeUpdate();
 	     }
 	
@@ -145,231 +149,74 @@ public class DatabaseConnection {
 	     return 0;
 		
 	}
-		
-	static public void addStemmedWord(String word,String url,String pos) throws SQLException {
-		String SQL="SELECT count(*) FROM indexing WHERE link=? and word=?";
+	static public void deleteLink(String url) throws SQLException {
+		String SQL="DELETE FROM url WHERE link=?";
 		PreparedStatement ps= conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
-	     ps.setString( 1, url);
-	     ps.setString( 2, word);
-	     ResultSet rs = ps.executeQuery();
-	     int n=0;
-	     if ( rs.next() ) {
-	    	    n = rs.getInt(1);
-	     }
-	     if (n>0) {
-	    	 String SQL2=null;
-	    	 if(pos=="h1") 
-		    	SQL2 = "UPDATE indexing set h1=h1+1 WHERE link=? and word=?";
-	    	 else if(pos=="h2") 
-	    		 SQL2 = "UPDATE indexing set h2=h2+1 WHERE link=? and word=?";
-	    	 else if(pos=="h3") 
-	    		 SQL2 = "UPDATE indexing set h3=h3+1 WHERE link=? and word=?";
-	    	 else if(pos=="h4") 
-	    		 SQL2 = "UPDATE indexing set h4=h4+1 WHERE link=? and word=?";
-	    	 else if(pos=="h5") 
-	    		 SQL2 = "UPDATE indexing set h5=h5+1 WHERE link=? and word=?";
-	    	 else if(pos=="h6") 
-	    		 SQL2 = "UPDATE indexing set h6=h6+1 WHERE link=? and word=?";
-	    	 else if(pos=="p") 
-	    		 SQL2 = "UPDATE indexing set p=p+1 WHERE link=? and word=?";
-	      	 else if(pos=="title") 
-	    		 SQL2 = "UPDATE indexing set title=title+1 WHERE link=? and word=?";
-	    	 else if(pos=="i") 
-	    		 SQL2 = "UPDATE indexing set italic=italic+1 WHERE link=? and word=?";
-	    	 else if(pos=="b") 
-	    		 SQL2 = "UPDATE indexing set bold=bold+1 WHERE link=? and word=?";
-			    	ps = conn.prepareStatement( SQL2, Statement.RETURN_GENERATED_KEYS );
-			    	ps.setString(1, url);
-			    	ps.setString(2, word);
-			    	ps.executeUpdate();
-	     }
-	     else
-	     {
-	    	 String SQL3 = "INSERT INTO indexing (link,word,h1,h2,h3,h4,h5,h6,p,title,italic,bold) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
-	    	 if(pos=="h1") {
-	    		 	
-			    	ps = conn.prepareStatement( SQL3, Statement.RETURN_GENERATED_KEYS );
-			    	ps.setString(1, url);
-			    	ps.setString(2, word);
-			    	ps.setInt(3, 1);
-			    	ps.setInt(4, 0);
-			    	ps.setInt(5, 0);
-			    	ps.setInt(6, 0);
-			    	ps.setInt(7, 0);
-			    	ps.setInt(8, 0);
-			    	ps.setInt(9, 0);
-			    	ps.setInt(10, 0);
-			    	ps.setInt(11, 0);
-			    	ps.setInt(12, 0);
-			    	ps.executeUpdate();
-	    		 
-	    	 }
-	    	 else if(pos=="h2") {
-			    	ps = conn.prepareStatement( SQL3, Statement.RETURN_GENERATED_KEYS );
-			    	ps.setString(1, url);
-			    	ps.setString(2, word);
-			    	ps.setInt(3, 0);
-			    	ps.setInt(4, 1);
-			    	ps.setInt(5, 0);
-			    	ps.setInt(6, 0);
-			    	ps.setInt(7, 0);
-			    	ps.setInt(8, 0);
-			    	ps.setInt(9, 0);
-			    	ps.setInt(10, 0);
-			    	ps.setInt(11, 0);
-			    	ps.setInt(12, 0);
-				    	ps.executeUpdate();
-	    	 }
-	    	 else if(pos=="h3") {
-			    	ps = conn.prepareStatement( SQL3, Statement.RETURN_GENERATED_KEYS );
-			    	ps.setString(1, url);
-			    	ps.setString(2, word);
-			    	ps.setInt(3, 0);
-			    	ps.setInt(4, 0);
-			    	ps.setInt(5, 1);
-			    	ps.setInt(6, 0);
-			    	ps.setInt(7, 0);
-			    	ps.setInt(8, 0);
-			    	ps.setInt(9, 0);
-			    	ps.setInt(10, 0);
-			    	ps.setInt(11, 0);
-			    	ps.setInt(12, 0);
-				    	ps.executeUpdate();
-	    		 
-	    	 }
-			else if(pos=="h4") {
-    		 	
-		    	ps = conn.prepareStatement( SQL3, Statement.RETURN_GENERATED_KEYS );
-		    	ps.setString(1, url);
-		    	ps.setString(2, word);
-		    	ps.setInt(3, 0);
-		    	ps.setInt(4, 0);
-		    	ps.setInt(5, 0);
-		    	ps.setInt(6, 1);
-		    	ps.setInt(7, 0);
-		    	ps.setInt(8, 0);
-		    	ps.setInt(9, 0);
-		    	ps.setInt(10, 0);
-		    	ps.setInt(11, 0);
-		    	ps.setInt(12, 0);
-			    	ps.executeUpdate();
-				    		 
-			}
-			else if(pos=="h5") {
-    		 	
-		    	ps = conn.prepareStatement( SQL3, Statement.RETURN_GENERATED_KEYS );
-		    	ps.setString(1, url);
-		    	ps.setString(2, word);
-		    	ps.setInt(3, 0);
-		    	ps.setInt(4, 0);
-		    	ps.setInt(5, 0);
-		    	ps.setInt(6, 0);
-		    	ps.setInt(7, 1);
-		    	ps.setInt(8, 0);
-		    	ps.setInt(9, 0);
-		    	ps.setInt(10, 0);
-		    	ps.setInt(11, 0);
-		    	ps.setInt(12, 0);
-			    	ps.executeUpdate();
-				 
-			}
-			else if(pos=="h6") {
-	    		 	
-			    	ps = conn.prepareStatement( SQL3, Statement.RETURN_GENERATED_KEYS );
-			    	ps.setString(1, url);
-			    	ps.setString(2, word);
-			    	ps.setInt(3, 0);
-			    	ps.setInt(4, 0);
-			    	ps.setInt(5, 0);
-			    	ps.setInt(6, 0);
-			    	ps.setInt(7, 0);
-			    	ps.setInt(8, 1);
-			    	ps.setInt(9, 0);
-			    	ps.setInt(10, 0);
-			    	ps.setInt(11, 0);
-			    	ps.setInt(12, 0);
-			    	ps.executeUpdate();
-				 
-			}
-			else if(pos=="p") {
-    		 	
-		    	ps = conn.prepareStatement( SQL3, Statement.RETURN_GENERATED_KEYS );
-		    	ps.setString(1, url);
-		    	ps.setString(2, word);
-		    	ps.setInt(3, 0);
-		    	ps.setInt(4, 0);
-		    	ps.setInt(5, 0);
-		    	ps.setInt(6, 0);
-		    	ps.setInt(7, 0);
-		    	ps.setInt(8, 0);
-		    	ps.setInt(9, 1);
-		    	ps.setInt(10, 0);
-		    	ps.setInt(11, 0);
-		    	ps.setInt(12, 0);
-			    	ps.executeUpdate();
-				
-			}
-			else if(pos=="title") {
-    		 
-		    	ps = conn.prepareStatement( SQL3, Statement.RETURN_GENERATED_KEYS );
-		    	ps.setString(1, url);
-		    	ps.setString(2, word);
-		    	ps.setInt(3, 0);
-		    	ps.setInt(4, 0);
-		    	ps.setInt(5, 0);
-		    	ps.setInt(6, 0);
-		    	ps.setInt(7, 0);
-		    	ps.setInt(8, 0);
-		    	ps.setInt(9, 0);
-		    	ps.setInt(10, 1);
-		    	ps.setInt(11, 0);
-		    	ps.setInt(12, 0);
-			    	ps.executeUpdate();
-				
-			}
-			else if(pos=="i") {
-	    		 
-		    	ps = conn.prepareStatement( SQL3, Statement.RETURN_GENERATED_KEYS );
-		    	ps.setString(1, url);
-		    	ps.setString(2, word);
-		    	ps.setInt(3, 0);
-		    	ps.setInt(4, 0);
-		    	ps.setInt(5, 0);
-		    	ps.setInt(6, 0);
-		    	ps.setInt(7, 0);
-		    	ps.setInt(8, 0);
-		    	ps.setInt(9, 0);
-		    	ps.setInt(10, 0);
-		    	ps.setInt(11, 1);
-		    	ps.setInt(12, 0);
-			    	ps.executeUpdate();
-				
-			}
-			else if(pos=="b") {
-	    		 
-		    	ps = conn.prepareStatement( SQL3, Statement.RETURN_GENERATED_KEYS );
-		    	ps.setString(1, url);
-		    	ps.setString(2, word);
-		    	ps.setInt(3, 0);
-		    	ps.setInt(4, 0);
-		    	ps.setInt(5, 0);
-		    	ps.setInt(6, 0);
-		    	ps.setInt(7, 0);
-		    	ps.setInt(8, 0);
-		    	ps.setInt(9, 0);
-		    	ps.setInt(10, 0);
-		    	ps.setInt(11, 0);
-		    	ps.setInt(12, 1);
-			    	ps.executeUpdate();
-				
-			}
-	     }
+		ps.setString(1,url);
+		ps.executeUpdate();
 		
 	}
+	static public void addWords(ArrayList<Word> tokens,String url) throws SQLException {
+	String SQL="INSERT INTO indexing (link,word,h1,h2,h3,h4,h5,h6,p,title,italic,bold) VALUES ";//(?,?,?,?,?,?,?,?,?,?,?,?)";
+	for(int i=0;i<tokens.size();i++) {
+		SQL=SQL+"(?,?,?,?,?,?,?,?,?,?,?,?)";
+		if(i!=tokens.size()-1)
+			SQL=SQL+",";
+	}
+	PreparedStatement ps= conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
+	int c=tokens.size()*12;
+	int k=0;
+	for(int i=1;i<=c;i++) {
+		if(i%12==1)
+			ps.setString(i,url);
+		else if(i%12==2)
+			ps.setString(i, tokens.get(k).word);
+		else if(i%12==3)
+			ps.setInt(i, tokens.get(k).h1);
+		else if(i%12==4)
+			ps.setInt(i, tokens.get(k).h2);
+		else if(i%12==5)
+			ps.setInt(i, tokens.get(k).h3);
+		else if(i%12==6)
+			ps.setInt(i, tokens.get(k).h4);
+		else if(i%12==7)
+			ps.setInt(i, tokens.get(k).h5);
+		else if(i%12==8)
+			ps.setInt(i, tokens.get(k).h6);
+		else if(i%12==9)
+			ps.setInt(i, tokens.get(k).p);
+		else if(i%12==10)
+			ps.setInt(i, tokens.get(k).title);
+		else if(i%12==11)
+			ps.setInt(i, tokens.get(k).italic);
+		else if(i%12==0)
+			{
+			ps.setInt(i, tokens.get(k).bold);
+			k++;}
+		
+	}
+	ps.executeUpdate();
+}
+	static public int getCountUnindexed() {
+		String SQL="SELECT 1 FROM indexing WHERE startIndexing=0 and doneIndexing LIMIT 1";
+		  int n=0;
+		try {
+			PreparedStatement ps= conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
+			ResultSet rs = ps.executeQuery();
+		   
+		     if ( rs.next() ) {
+		    	    n = rs.getInt(1);
+		     }
+		}
+		catch(Exception e) {
+			
+		}
+	     return n;
+	}
 	static public String getFirstUnIndexed(int num) throws SQLException {
-		String SQL="SELECT Link FROM url WHERE doneIndexing =0 and startIndexing=0 LIMIT ?,1";
+		String SQL="SELECT Link FROM url WHERE doneIndexing =0 and startIndexing=0 LIMIT 1";
 		PreparedStatement ps= conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
-		ps.setInt(1, num-1);
+//		ps.setInt(1, num-1);
 	     ResultSet rs = ps.executeQuery();
 	     String  url=null;
 	     if ( rs.next() ) {
@@ -474,14 +321,16 @@ public class DatabaseConnection {
 		
 	}
 	static public void resetDoneAndStartIndexing() throws SQLException {
-		String SQL ="UPDATE url set doneIndexing=0 and startIndexing=0";
+		String SQL ="UPDATE url set doneIndexing=0,startIndexing=0";
 		PreparedStatement ps= conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
 		ps.executeUpdate();
 	}
 	static public void updateIDIncrementally() throws SQLException{
-		String SQL ="select @i := 0\n" + 
-				"update bar set c = (select @i := @i + 1);";
+		//String SQL ="select @i := -1;update url set id = (select @i := @i + 1);";
+		//"ALTER TABLE tbl AUTO_INCREMENT = -1";
+		String SQL="SET @a = -1;UPDATE url SET id = @a:=@a+1;";
 		PreparedStatement ps= conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
+		//ps.setInt(1, -1);
 		ps.executeUpdate();
 		
 	}
@@ -593,11 +442,8 @@ public class DatabaseConnection {
 		ps.setDouble(1, pageRank);
 		ps.setInt(2, id);
 		ps.executeUpdate();
-	}
-//	//get all edges to construct graph
-//	static public void getEdges() {
-//		
-//	}
+	}     
+		
 	public static double getLinkPageRank(String key) throws SQLException {
 		// TODO Auto-generated method stub
 		String SQL="Select rank FROM url WHERE Link= '"+key+"'";
@@ -610,4 +456,6 @@ public class DatabaseConnection {
 		return d;
 	}
 }
+
+
 
