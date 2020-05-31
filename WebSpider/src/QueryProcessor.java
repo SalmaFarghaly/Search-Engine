@@ -28,12 +28,7 @@ public class QueryProcessor {
  		List<String> output = Parser.parse(message);
  		return output;
 	}
-/*	public static void main(String[] args) throws IOException {
-		String message =  SetOriginalQuery() ;
-		Parser.loadStopwords();
- 		List<String> output = Parser.parse(message);
- 		salma bt3mly build ezzay
-	}*/
+
 	
 }
 	

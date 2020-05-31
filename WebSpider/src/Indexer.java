@@ -66,7 +66,9 @@ public class Indexer {
     	System.out.println("Enter You want to re-index or index: (1) index (2) re-index");
     	 BufferedReader consoleReader =  new BufferedReader(new InputStreamReader(System.in)); 
         // Reading data using readLine 
-        String type = consoleReader.readLine(); 
+
+    	 String type = consoleReader.readLine(); 
+        
         //check if he wants to re-index the content or not
         if(Integer.parseInt(type)==2) {
         	//drop all the table
@@ -117,7 +119,6 @@ public class Indexer {
 				 while(url!=null) {
 					 Document doc=null;
 					 System.out.print(this.ThreadNo +"   The current urllllllllllllllllllllllll  "+url+"\n");
-
 					 try {
 						doc = Jsoup.connect(url).timeout(180000).ignoreHttpErrors(true).get();
 					} catch (IOException e) {
