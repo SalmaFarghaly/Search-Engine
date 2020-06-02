@@ -1,5 +1,3 @@
-
-
 import org.jsoup.Jsoup;
 
 import org.jsoup.nodes.Document;
@@ -34,7 +32,7 @@ public class WebSpider{
     
     public int count =0;
     //maximum number of links saved in database
-    public int threshold=10000;
+    public int threshold=6500;
 
     //startURL is seed set
     private WebSpider(final ArrayList<URL> list,int type) throws SQLException, MalformedURLException {
@@ -42,6 +40,7 @@ public class WebSpider{
         count=list.size();
         //check that it was first time to run crawler
         if(type==1&&DatabaseConnection.isThreadStateEmpty()==true) {
+        	System.out.print("GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG\n");
 	       for(URL url :list){
 	    	   DatabaseConnection.saveInitials(url.toString());
 	       }
@@ -91,7 +90,7 @@ public class WebSpider{
      	///thread number
      	int threadNo;
      	//max number of links
-        public int threshold=10000;
+        public int threshold=6500;
     	
     	public Crawl(URL url,Integer d, int num) {
     		this.link=url;
@@ -126,6 +125,17 @@ public class WebSpider{
 		          System.out.print("HYPERRRRRRRRRRRRRRRRRRRRRRCOUNTTTTTTTTTTTTTTTTTTTTTT"+linksOnPage.size()+"\n");
 	              String [] parts=null;
 		          for (final Element page : linksOnPage) {
+		        	   	synchronized(this.dummy) 
+						{
+			              try {
+			  				countURLS=DatabaseConnection.getCountUrl();
+			  	          } 
+			  	          catch (SQLException e1) {
+			  				e1.printStackTrace();
+			  	          }
+						}
+		        	   	if(countURLS>=threshold)
+		        	   		break;
 		              final String urlText = page.attr("abs:href").trim();
 		              if(urlText=="")
 		            	  continue;
@@ -134,7 +144,8 @@ public class WebSpider{
 //		              System.out.print("Thread # "+this.threadNo+" DISCOVERED "+discoveredURL+"\n");
 		              parts=discoveredURL.toString().split("#");
 		              //check if this hyper link is image,xml
-		              if(parts[0].matches("(.*).jpg")==true)
+		              if(parts[0].matches("(.*).jpg")==true||parts[0].matches("(.*)/pdf")==true||parts[0].matches("(.*).pdf")==true||parts[0].matches("(.*).png")==true
+		            		  ||parts[0].matches("(.*).asp")==true)
 		            	  continue;
 		            //check if used protocol is http or https
 		              if(parts[0].matches("http://(.*)")==false && parts[0].matches("https://(.*)")==false) 
@@ -142,15 +153,8 @@ public class WebSpider{
 		            	  //check if it is allowed to enter link
 		              if(robotSafe(new URL(parts[0]))==false )
 		            	  continue;
-		        	synchronized(this.dummy) 
-					{
-		              try {
-		  				countURLS=DatabaseConnection.getCountUrl();
-		  	          } 
-		  	          catch (SQLException e1) {
-		  				e1.printStackTrace();
-		  	          }
-					}
+
+		        	
 		 
 		        	  try {
 		      
@@ -167,7 +171,7 @@ public class WebSpider{
 			            	  //lock table
 			              	DatabaseConnection.incrementInBound(parts[0]);
 			              	DatabaseConnection.insertDocument(currentURL.toString(),parts[0]);
-			              	DatabaseConnection.incrementOutBound(currentURL.toString());
+			              	DatabaseConnection.incrementOutBound(currentURL.toString(),1);
 			              	//unlock table
 			              }
 			           
@@ -190,6 +194,7 @@ public class WebSpider{
 	          
 	        
     	}
+    	System.out.print(this.threadNo+"  FINISHEDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD\n");
           
     		
     	}
@@ -293,9 +298,9 @@ public class WebSpider{
         //or we will read the seed list
         //first time to run crawler or need to recrawl
         //if ThreadState is saved and he want to crawl "1" that means interrupt has occurred
-    	if(DatabaseConnection.isThreadStateEmpty()==false||Integer.parseInt(type)==2) {
+    	if(DatabaseConnection.isThreadStateEmpty()==true||Integer.parseInt(type)==2) {
 	    	try {
-				reader = new BufferedReader(new FileReader("C:\\Users\\Lenovo\\git\\Search-Engine1\\seedlist.txt"));
+				reader = new BufferedReader(new FileReader("C:\\Users\\Dell\\git\\repository\\seedlist.txt"));
 				String line = reader.readLine();
 				while (line != null) {
 					System.out.println(line);
@@ -316,6 +321,3 @@ public class WebSpider{
     }
 
 }
-
-
-

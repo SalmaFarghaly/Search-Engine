@@ -62,7 +62,7 @@ public class DatabaseConnection {
 		    	ps.executeUpdate();
 	     }
 	     else {
-	    	 String SQL2 = "INSERT INTO url (Link,inBound,outBound,doneIndexing,startIndexing,id,rank) VALUES (?,?,?,?,?,?,?)";
+	    	 String SQL2 = "INSERT INTO url (Link,inBound,outBound,doneIndexing,startIndexing,id,rank,count) VALUES (?,?,?,?,?,?,?,?)";
 		    	ps = conn.prepareStatement( SQL2, Statement.RETURN_GENERATED_KEYS );
 		    	ps.setString( 1, discoveredURL);
 		    	ps.setInt(2, 1);
@@ -71,9 +71,23 @@ public class DatabaseConnection {
 		    	ps.setInt(5,0);
 		    	ps.setInt(6,0);
 		    	ps.setInt(7,0);
+		    	ps.setInt(8,0);
 		    	ps.executeUpdate();
 	     }
 	
+	}
+	static public ArrayList<String> GetOutBoundLinks(String url) throws SQLException {
+		ArrayList<String> outBoundLinks= new ArrayList<String>();
+		int i=0;
+		String link=null;
+		String SQL="SELECT discoveredURL FROM bounds WHERE url= ? ";
+		PreparedStatement ps= conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
+		ps.setString(1, url);
+		ResultSet rs = ps.executeQuery();
+		while(rs.next()) {
+			outBoundLinks.add(rs.getString(1));
+		}		
+		return outBoundLinks;
 	}
 	
 	
@@ -85,11 +99,32 @@ public class DatabaseConnection {
 	    	ps.executeUpdate();
 		
 	}
-	static public void incrementOutBound(String url) throws SQLException {
-		String SQL="UPDATE url set outBound=outBound+1 WHERE Link=?";
+	static public void insertDocuments(String url,ArrayList<String>discoveredURLS) throws SQLException {
+		  String SQL3="INSERT INTO bounds (url,discoveredURL) VALUES ";//(?,?)";
+		  int c=discoveredURLS.size()*2;
+		  for(int i=0;i<discoveredURLS.size();i++) {
+			  SQL3+="(?,?)";
+			  if(i!=discoveredURLS.size()-1)
+				  SQL3+=",";
+		  }
+		  PreparedStatement ps= conn.prepareStatement( SQL3, Statement.RETURN_GENERATED_KEYS );
+		  int k=0;
+		  for(int i=1;i<=c;i++) {
+			  if(i%2==1)
+		    	ps.setString(i, url);
+			  else if(i%2==0) {
+		    	ps.setString(i,discoveredURLS.get(k));
+		    	k++;
+		    	}
+		  }
+		    	ps.executeUpdate();
+	}
+	static public void incrementOutBound(String url,int t) throws SQLException {
+		String SQL="UPDATE url set outBound=outBound+? WHERE Link=?";
 		PreparedStatement ps;
 		ps = conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
-    	ps.setString(1,url);
+		ps.setInt(1, t);
+    	ps.setString(2,url);
     	ps.executeUpdate();
 		
 		
@@ -124,13 +159,16 @@ public class DatabaseConnection {
 }
 	
 	static public void saveInitials(String url) throws SQLException {
-    	 String SQL2 = "INSERT INTO url (Link,inBound,outBound,doneIndexing,startIndexing) VALUES (?,?,?,?,?)";
+    	 String SQL2 = "INSERT INTO url (Link,inBound,outBound,doneIndexing,startIndexing,id,rank,count) VALUES (?,?,?,?,?,?,?,?)";
     		PreparedStatement ps = conn.prepareStatement( SQL2, Statement.RETURN_GENERATED_KEYS );
 	    	ps.setString( 1, url);
 	    	ps.setInt(2, 0);
 	    	ps.setInt(3,0);
 	    	ps.setInt(4,0);
 	    	ps.setInt(5,0);
+	    	ps.setInt(6,0);
+	    	ps.setInt(7,0);
+	    	ps.setInt(8,0);
 	    	ps.executeUpdate();
 	}
 	
@@ -156,7 +194,8 @@ public class DatabaseConnection {
 		ps.executeUpdate();
 		
 	}
-	static public void addWords(ArrayList<Word> tokens,String url) throws SQLException {
+	
+	static public void addWords(ArrayList<Word> tokens,String url,Integer count) throws SQLException {
 	String SQL="INSERT INTO indexing (link,word,h1,h2,h3,h4,h5,h6,p,title,italic,bold) VALUES ";//(?,?,?,?,?,?,?,?,?,?,?,?)";
 	for(int i=0;i<tokens.size();i++) {
 		SQL=SQL+"(?,?,?,?,?,?,?,?,?,?,?,?)";
@@ -196,6 +235,13 @@ public class DatabaseConnection {
 		
 	}
 	ps.executeUpdate();
+	
+	SQL="UPDATE url SET count =? WHERE link=? ";
+	ps= conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
+	ps.setInt(1, count);
+	ps.setString(2,url);
+	ps.executeUpdate();
+	
 }
 	static public int getCountUnindexed() {
 		String SQL="SELECT 1 FROM indexing WHERE startIndexing=0 and doneIndexing LIMIT 1";
@@ -245,11 +291,11 @@ public class DatabaseConnection {
 	     if ( rs.next() ) {
 	    	    n = rs.getInt(1);
 	    	    if(n>0)
-	    	    	return true;
-	    	    else 
 	    	    	return false;
+	    	    else 
+	    	    	return true;
 	     }
-	     return false;
+	     return true;
 		
 	}
 	static public String getThreadUrl(int ThreadNo) throws SQLException{
