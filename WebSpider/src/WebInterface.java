@@ -1,4 +1,5 @@
 import java.io.*;
+
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.DriverManager;
@@ -12,11 +13,26 @@ import java.util.stream.Stream;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
+
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.ArrayList;
+
+import javax.sound.sampled.LineUnavailableException;
+
+import com.darkprograms.speech.microphone.Microphone;
+import com.darkprograms.speech.recognizer.GSpeechDuplex;
+import com.darkprograms.speech.recognizer.GSpeechResponseListener;
+import com.darkprograms.speech.recognizer.GoogleResponse;
+
+//import marytts.TextToSpeech;
+import marytts.signalproc.effects.JetPilotEffect;
+import net.sourceforge.javaflacencoder.FLACFileWriter;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
-
 public class WebInterface extends HttpServlet{
+	
 
     public void doGet(HttpServletRequest request, HttpServletResponse response)
     throws IOException, ServletException {
@@ -139,6 +155,15 @@ public class WebInterface extends HttpServlet{
           		rd2.include(request, response);
           		 System.out.println("Done");
             	  }
+            
+            try {
+            	System.out.print(SearchInput+"\n");
+    			DatabaseConnection.saveSearchQuery(SearchInput);
+    		} catch (SQLException e) {
+    			// TODO Auto-generated catch block
+    			e.printStackTrace();
+    		}
+            	
         		
             }
            
@@ -150,33 +175,4 @@ public class WebInterface extends HttpServlet{
 		
 	}
 }
-/*	DatabaseConnection.DatabaseConnect();
-    
-        response.setContentType("text/html");
-        //String message = "Your Search Query is " + SearchInput ;
-        List<Entry<String, Double>> m = null;
-        long startTime = 0, endTime = 0;
-        
-		try {
-			try {
-				 startTime = System.nanoTime();
-				m = Ranker.ranker(SearchInput);
-				endTime = System.nanoTime();
-			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		finally {
-			 
-			//List<String> stopWords = Files.readAllLines(Paths.get("C:\\Users\\Lenovo\\Downloads\\apache-tomcat-9.0.34\\webapps\\ROOT\\trial2.html"));
-		  	long time = endTime-startTime;
-		  	time = time/1000000000;
- * */
- 
+

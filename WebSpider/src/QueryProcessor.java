@@ -4,6 +4,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -34,7 +35,12 @@ public class QueryProcessor {
 	}
 	public static List<String> ParsedQuery(String message) throws IOException {
 		Parser.loadStopwords();
- 		List<String> output = Parser.parse(message);
+		String[] tokens = message.split("[^a-zA-Z0-9'-]");
+		ArrayList<String> finalTokens=new ArrayList();
+		finalTokens.addAll(Arrays.asList(tokens));
+		System.out.print("HJUUUU"+finalTokens+"\n");
+ 		List<String> output = Parser.parse(finalTokens);
+ 		System.out.print("HJUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU"+output+"\n");
  		return output;
 	}
 	public static void main(String[] args) throws IOException, SQLException {

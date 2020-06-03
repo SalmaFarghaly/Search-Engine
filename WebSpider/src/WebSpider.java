@@ -32,7 +32,7 @@ public class WebSpider{
     
     public int count =0;
     //maximum number of links saved in database
-    public int threshold=6500;
+    public int threshold=7500;
 
     //startURL is seed set
     private WebSpider(final ArrayList<URL> list,int type) throws SQLException, MalformedURLException {
@@ -90,7 +90,7 @@ public class WebSpider{
      	///thread number
      	int threadNo;
      	//max number of links
-        public int threshold=6500;
+        public int threshold=7500;
     	
     	public Crawl(URL url,Integer d, int num) {
     		this.link=url;
@@ -118,7 +118,8 @@ public class WebSpider{
 	        System.out.print("CUREENT URL IS "+currentURL+"\n");
 	        Document document=null;
 			try {
-				document = Jsoup.connect(currentURL.toString()).get();
+				//infinite timeOut
+				document = Jsoup.connect(currentURL.toString()).timeout(0).get();
 			
 				
 		          final Elements linksOnPage = document.select("a[href]");
@@ -145,14 +146,15 @@ public class WebSpider{
 		              parts=discoveredURL.toString().split("#");
 		              //check if this hyper link is image,xml
 		              if(parts[0].matches("(.*).jpg")==true||parts[0].matches("(.*)/pdf")==true||parts[0].matches("(.*).pdf")==true||parts[0].matches("(.*).png")==true
-		            		  ||parts[0].matches("(.*).asp")==true)
+		            		  ||parts[0].matches("(.*).asp")==true||parts[0].matches("(.*)/image(.*)")==true||parts[0].matches("(.*)login(.*)")==true)
 		            	  continue;
 		            //check if used protocol is http or https
 		              if(parts[0].matches("http://(.*)")==false && parts[0].matches("https://(.*)")==false) 
 		            	  continue;
 		            	  //check if it is allowed to enter link
-		              if(robotSafe(new URL(parts[0]))==false )
-		            	  continue;
+		              if(robotSafe(new URL(parts[0]))==false ) {
+		            	  System.out.print("DISALLLLOWWWWEDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD\n");
+		            	  continue;}
 
 		        	
 		 
@@ -273,9 +275,9 @@ public class WebSpider{
             {
                
                 if (robotRule.rule.length() == 0) return true; // allows everything if BLANK
-                if (robotRule.rule == "/") return false;       // allows nothing if /
+                if (robotRule.rule == "/"&&robotRule.userAgent=="*") return false;       // allows nothing if /
 
-                if (robotRule.rule.length() <= path.length())
+                if (robotRule.rule.length() <= path.length()&&robotRule.userAgent=="*")
                 { 
                     String pathCompare = path.substring(0, robotRule.rule.length());
                     if (pathCompare.equals(robotRule.rule)) return false;
@@ -300,7 +302,7 @@ public class WebSpider{
         //if ThreadState is saved and he want to crawl "1" that means interrupt has occurred
     	if(DatabaseConnection.isThreadStateEmpty()==true||Integer.parseInt(type)==2) {
 	    	try {
-				reader = new BufferedReader(new FileReader("C:\\Users\\Lenovo\\git\\Search-Engine\\seedlist.txt"));
+				reader = new BufferedReader(new FileReader("C:\\Users\\Dell\\Desktop\\Apt project\\seedlist trial.txt"));
 				String line = reader.readLine();
 				while (line != null) {
 					System.out.println(line);

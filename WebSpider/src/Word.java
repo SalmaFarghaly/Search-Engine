@@ -27,6 +27,9 @@ public class Word {
 		else if(pos=="italic")italic=italic+1;
 		else if(pos=="title") title=title+1;
 	}
-	
+	public void print() {
+		System.out.print("["+this.word+" "+this.h1+" "+this.h2+" "+this.h3+" "+this.h4+" "+this.h5+" "+this.h6+" "+
+				this.p+" "+this.bold+" "+this.italic+" "+this.title+"]\n");
+	}
 
 }
