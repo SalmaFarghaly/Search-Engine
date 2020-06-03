@@ -6,11 +6,13 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.jsoup.Jsoup;
 
@@ -42,7 +44,7 @@ public class Ranker {
 			h6= new ArrayList<Integer>(),p= new ArrayList<Integer>();
 
 	// public static void main(String[] args) throws IOException, SQLException {
-	public static List<Entry<String, Double>> ranker (String QueryWord) throws SQLException, IOException	{
+	public static Map<String, Double> ranker (String QueryWord,List<String> ParsedQuery) throws SQLException, IOException	{
 	//Connect to DataBase
 	    	DatabaseConnection.DatabaseConnect();
 	    	conn= DriverManager.getConnection("jdbc:mysql://localhost/SearchEngine?serverTimezone=UTC","root","");
@@ -53,15 +55,21 @@ public class Ranker {
 	    if( QueryWord.startsWith("\"") & QueryWord.endsWith("\"")) { // it is a phrase searching case
 	    	//CalcTfIDF (QueryWord);
 	    	isPhraseSearching = true;
-	    	PhraseSearching(QueryWord);
+	    	PhraseSearching(QueryWord,ParsedQuery);
 	    } 
 	    else { // will make normal search
-	    	CalcTfIDF (QueryWord);
+	    	CalcTfIDF (QueryWord,ParsedQuery);
 	    }
 		// System.out.print("-------------------Showing all results----------------------");
 		// System.out.print("\r\n");
 	     //System.out.println(entriesSortedByValues(Docs));
-	 return entriesSortedByValues(Docs);
+	    Map<String,Double> topTen =
+	    	    Docs.entrySet().stream()
+	    	       .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+	    	       .limit(200)
+	    	       .collect(Collectors.toMap(
+	    	          Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+	 return topTen;
 		// calculatePageRank();
 	 }
 
@@ -82,16 +90,10 @@ public class Ranker {
             
     } 
 		
-	private static void PhraseSearching(String s) throws  SQLException {
+	private static void PhraseSearching(String s,List<String> ParsedQuery) throws  SQLException {
 	    String QueryWithoutQuotes =s.replaceAll("^\"+|\"+$", "");
-	    List<String> inputString = null;
-		try {
-			inputString = QueryProcessor.ParsedQuery(s);
-			
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+	    List<String> inputString = ParsedQuery;
+		
 	    for(int i=0; i<inputString.size(); i++) {
 	    
 	    	getUrlsWithTerm(inputString.get(i),0);
@@ -151,13 +153,8 @@ public class Ranker {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-        	
-        		
-        	
-	    }
-
+       }
 	    Docs.values().removeIf(value -> value == 0.0);
-	        
 	   }
 	  
 
@@ -179,8 +176,8 @@ public class Ranker {
 		return matches;
     }
 
-	private static void CalcTfIDF (String s) throws SQLException, IOException {
-	       List<String> inputString = QueryProcessor.ParsedQuery(s);
+	private static void CalcTfIDF (String s,List<String> ParsedQuery) throws SQLException, IOException {
+	       List<String> inputString = ParsedQuery;
 	    	for(int i=0; i<inputString.size(); i++) {
 	    		getFilteredDocuments(inputString.get(i));
 		   }
@@ -239,11 +236,13 @@ public class Ranker {
 				  System.out.print("\r\n");
 			//	 int index = Documents.indexOf(d);
 				  Double D = Docs.get(URL);
+				  if(D !=null) {
 				  System.out.print("trying to get the doubled URL"+URL+ " tfidf old"+D);
-				  D += tfIdf;
-				  D = D*10;
-				  System.out.print(" tfidf new"+D);
-				  Docs.put(URL, D); // check mappp
+					  D += tfIdf;
+					  D = D*10;
+					  System.out.print(" tfidf new"+D);
+					  Docs.put(URL, D); // check mappp
+				  }
 			 }
 			 System.out.print("\r\n");
 		 }

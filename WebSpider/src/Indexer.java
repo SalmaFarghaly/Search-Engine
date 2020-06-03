@@ -240,8 +240,8 @@ public class Indexer {
 						try {
 							if(tokens.isEmpty()==false) {
 								System.out.print("WORD COUNTTTTTTTTTTTTTTTTTTTTTTTTT "+wordCount+"\n");
-								for(int i=0; i<tokens.size(); i++) {
-									System.out.print(tokens.get(i));
+								for(int i1=0; i1<tokens.size(); i1++) {
+									System.out.print(tokens.get(i1));
 									System.out.print("\r\n");
 									
 
