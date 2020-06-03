@@ -17,5 +17,6 @@
 	<classpathentry kind="lib" path="C:/Users/Dell/.m2/repository/com/github/axet/java-flac-encoder/0.3.8/java-flac-encoder-0.3.8-sources.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Dell/.m2/repository/com/github/goxr3plus/java-google-speech-api/V2.1/java-google-speech-api-V2.1.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Dell/.m2/repository/com/github/goxr3plus/java-google-speech-api/V2.1/java-google-speech-api-V2.1-sources.jar"/>
+	<classpathentry kind="lib" path="D:/google-api-java-client-master.zip"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

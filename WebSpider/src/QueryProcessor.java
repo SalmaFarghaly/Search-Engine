@@ -3,6 +3,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -25,7 +26,10 @@ public class QueryProcessor {
 	}
 	public static List<String> ParsedQuery(String message) throws IOException {
 		Parser.loadStopwords();
- 		List<String> output = Parser.parse(message);
+		String[] tokens = message.split("[^a-zA-Z0-9'-]");
+		ArrayList<String> finalTokens=new ArrayList();
+		finalTokens.addAll(Arrays.asList(tokens));
+ 		List<String> output = Parser.parse(finalTokens);
  		return output;
 	}
 

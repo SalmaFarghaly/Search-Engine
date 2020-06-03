@@ -32,15 +32,11 @@ public class Parser {
 	    System.out.print("stopWords\n"+stopWords+"\n");
 	}
 
-	public static ArrayList<String> parse(String text) throws IOException {
-		String[] tokens = text.split("[^a-zA-Z0-9'-]");
-//		System.out.print("TTTTTTTTTTTTTTTTTTTTTTTTTOOOOOOOOOOOOOOOOOOKKKKKKKKKKKKKKKKKKKKKKKEEEEEEEENS\n");
-//		for(int i=0;i<tokens.length;i++) {
-//			System.out.print(" "+tokens[i]+" ");
-//		}
+	public static ArrayList<String> parse(ArrayList<String>tokens) throws IOException {
 		ArrayList<String> stemmedTokens=new ArrayList<String>();
 		for(String token:tokens) {
-			
+			if(token.isBlank()==true||token.isEmpty()==true)
+				continue;
 			token.toLowerCase();
 			if(stopWords.contains(token)==true)
 				continue;
@@ -93,7 +89,7 @@ public class Parser {
 		   BufferedReader consoleReader =  new BufferedReader(new InputStreamReader(System.in)); 
 	    // Reading data using readLine 
 	    String args= consoleReader.readLine(); 
-	    parse(args);
+//	    parse(args);
 	}
 
 }

@@ -184,7 +184,7 @@ public class DatabaseConnection {
 	    	    return n;
 		
 	}
-	     return 0;
+	     return n;
 		
 	}
 	static public void deleteLink(String url) throws SQLException {
@@ -500,6 +500,35 @@ public class DatabaseConnection {
 			d=rs.getDouble(1);
 		}
 		return d;
+	}
+	public static void saveSearchQuery(String q) throws SQLException {
+		String SQL="SELECT count(*) FROM searchqueries WHERE query=?";
+		System.out.print(SQL+"\n");
+		Connection conn2= DriverManager.getConnection("jdbc:mysql://localhost/SearchEngine?serverTimezone=UTC","root","");
+		PreparedStatement ps= conn2.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
+		ps.setString(1, q);
+		ResultSet rs = ps.executeQuery();
+		int d = 0;
+		if(rs.next()) {
+			d=rs.getInt(1);
+		}
+		if(d>0) {
+			//update count
+			SQL="UPDATE searchqueries set count=count+1 WHERE query=?";
+			ps= conn2.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
+			ps.setString(1, q);
+			ps.executeUpdate();
+		}
+		else {
+			SQL="INSERT INTO searchqueries(query,count) VALUES(?,?)";
+			ps= conn2.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
+			ps.setString(1, q);
+			ps.setInt(2, 1);
+			ps.executeUpdate();
+			
+			
+		}
+		
 	}
 }
 

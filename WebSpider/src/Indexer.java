@@ -8,6 +8,8 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 
+import marytts.util.math.ArrayUtils;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -16,6 +18,7 @@ import java.net.URL;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -52,24 +55,10 @@ public class Indexer {
 		index3.join();
 		index4.join();
 		index5.join();
-//		Thread index6=new Index(++ThreadNo,dummy);
-//		index6.start();
-//		Thread index7=new Index(++ThreadNo,dummy);
-//		index7.start();
-//		Thread index8=new Index(++ThreadNo,dummy);
-//		index8.start();
-//		Thread index9=new Index(++ThreadNo,dummy);
-//		index9.start();
-//		Thread index10=new Index(++ThreadNo,dummy);
-//		index10.start();
-//		Thread index11=new Index(++ThreadNo,dummy);
-//		index11.start();
 	}
 
 
     public static void main(String[] args) throws IOException, SQLException, InterruptedException {
-		//clear cache
-    	java.util.ResourceBundle.clearCache(); 
     	//Connect to DataBase
     	DatabaseConnection.DatabaseConnect();
 
@@ -94,7 +83,6 @@ public class Indexer {
         consoleReader.close();
         Parser.loadStopwords();
     	Indexer indexer=new Indexer();
-//    	DatabaseConnection.updateIDIncrementally();
     	
     //	Ranker.calculatePageRank();
     	
@@ -109,7 +97,7 @@ public class Indexer {
     	}
     
 		public void run(){
-			//load Stop Words
+		
 			
 			//create 5 threads
 			String url = null ;
@@ -131,15 +119,8 @@ public class Indexer {
 					 Document doc=null;
 					 System.out.print(this.ThreadNo +"   The current urllllllllllllllllllllllll  "+url+"\n");
 					 try {
-						doc = Jsoup.connect(url).timeout(180000).ignoreHttpErrors(true).get();
+						doc = Jsoup.connect(url).timeout(0).get();
 					} catch (IOException e) {
-//						try {
-////							DatabaseConnection.SetDoneIndexing(url);
-//						} catch (SQLException e1) {
-//							// TODO Auto-generated catch block
-//							e1.printStackTrace();
-//						}
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					if(doc!=null) {
@@ -148,86 +129,213 @@ public class Indexer {
 						Integer wordCount=0;
 						try {
 						Elements h1Tags = words.select("h1");
-						String textH1=h1Tags.text();
-//						System.out.print("H1Tagssssssssssssssssssssssssssssssssssss\n"+textH1+"\n");
-						if(!textH1.isEmpty()&&!textH1.isBlank()){
-							String[] tokensH1 = textH1.split("[^a-zA-Z0-9'-]");
-							wordCount+=tokensH1.length;
-							stemAndRemoveStopWords(textH1,url,"h1",tokens);
+						System.out.print("H1Tagssssssssssssssssssssssssssssssssssss\n");
+						///String textH1=h1Tags.text();
+						java.util.List<String> h1List = words.select("h1").eachText();
+						System.out.println(Arrays.toString(h1List.toArray()));
+						System.out.print("=============================================\n");
+						if(!h1List.isEmpty()){
+							
+							ArrayList<String>tokensH1=new ArrayList();
+							for(int j=0;j<h1List.size();j++) {
+								String[] tempTokens=h1List.get(j).split("[^a-zA-Z0-9'-]");
+								System.out.println(Arrays.toString(tempTokens)+"\n");
+								tokensH1.addAll(Arrays.asList(tempTokens));
+								System.out.println(tokensH1+"\n");
+							}
+						
+							wordCount+=tokensH1.size();
+							stemAndRemoveStopWords(tokensH1,url,"h1",tokens);
 							
 							}
 						Elements h2Tags = words.select("h2");
+						System.out.print("H2Tagssssssssssssssssssssssssssssssssssss\n");
 						String textH2=h1Tags.text();
-//						System.out.print("H2Tagssssssssssssssssssssssssssssssssssss\n"+textH2+"\n");
-						if(!textH2.isEmpty()&&!textH2.isBlank()) {
-							String[] tokensH2 = textH2.split("[^a-zA-Z0-9'-]");
-							wordCount+=tokensH2.length;
-							stemAndRemoveStopWords(textH2,url,"h2",tokens);
-						}
+						java.util.List<String> h2List = words.select("h2").eachText();
+						System.out.println(Arrays.toString(h2List.toArray()));
+						System.out.print("=============================================\n");
+						if(!h2List.isEmpty()){
+							
+							ArrayList<String>tokensH2=new ArrayList();
+							for(int j=0;j<h2List.size();j++) {
+								String[] tempTokens=h2List.get(j).split("[^a-zA-Z0-9'-]");
+								System.out.println(Arrays.toString(tempTokens)+"\n");
+								tokensH2.addAll(Arrays.asList(tempTokens));
+								System.out.println(tokensH2+"\n");
+							}
+							wordCount+=tokensH2.size();
+							stemAndRemoveStopWords(tokensH2,url,"h2",tokens);
+							
+							}
+
 						Elements h3Tags = words.select("h3");
+						System.out.print("H3Tagssssssssssssssssssssssssssssssssssss\n");
 						String textH3=h3Tags.text();
+						java.util.List<String> h3List = words.select("h3").eachText();
+						System.out.println(Arrays.toString(h3List.toArray()));
+						System.out.print("=============================================\n");
 //						System.out.print("H3Tagssssssssssssssssssssssssssssssssssss\n"+textH3+"\n");
-						if(!textH3.isEmpty()&&!textH3.isBlank()) {
-							String[] tokensH3 = textH3.split("[^a-zA-Z0-9'-]");
-							wordCount+=tokensH3.length;
-							stemAndRemoveStopWords(textH3,url,"h3",tokens);
+						if(!h3List.isEmpty()){
+							
+							ArrayList<String>tokensH3=new ArrayList();
+							for(int j=0;j<h3List.size();j++) {
+								String[] tempTokens=h3List.get(j).split("[^a-zA-Z0-9'-]");
+								System.out.println(Arrays.toString(tempTokens)+"\n");
+								tokensH3.addAll(Arrays.asList(tempTokens));
+								System.out.println(tokensH3+"\n");
+							}
+							//display bothhhhhhhhhhhhhhhhhhhhhhhhhh
+							wordCount+=tokensH3.size();
+							stemAndRemoveStopWords(tokensH3,url,"h3",tokens);
+							
 							}
 						Elements h4Tags = words.select("h4");
+						System.out.print("H4Tagssssssssssssssssssssssssssssssssssss\n");
 						String textH4=h4Tags.text();
+						java.util.List<String> h4List = words.select("h4").eachText();
+						System.out.println(Arrays.toString(h4List.toArray()));
+						System.out.print("=============================================\n");
 //						System.out.print("H4Tagssssssssssssssssssssssssssssssssssss\n"+textH4+"\n");
-						if(!textH4.isEmpty()&&!textH4.isBlank()) {
-							String[] tokensH4 = textH4.split("[^a-zA-Z0-9'-]");
-							wordCount+=tokensH4.length;
-							stemAndRemoveStopWords(textH4,url,"h4",tokens);
-						}
+						if(!h4List.isEmpty()){
+							
+							ArrayList<String>tokensH4=new ArrayList();
+							for(int j=0;j<h4List.size();j++) {
+								String[] tempTokens=h4List.get(j).split("[^a-zA-Z0-9'-]");
+								System.out.println(Arrays.toString(tempTokens)+"\n");
+								tokensH4.addAll(Arrays.asList(tempTokens));
+								System.out.println(tokensH4+"\n");
+							}
+							//display bothhhhhhhhhhhhhhhhhhhhhhhhhh
+							wordCount+=tokensH4.size();
+							stemAndRemoveStopWords(tokensH4,url,"h4",tokens);
+							
+							}
 						Elements h5Tags = words.select("h5");
+						System.out.print("H5Tagssssssssssssssssssssssssssssssssssss\n");
 						String textH5=h5Tags.text();
+						java.util.List<String> h5List = words.select("h5").eachText();
+						System.out.println(Arrays.toString(h5List.toArray()));
+						System.out.print("=============================================\n");
 //						System.out.print("H5Tagssssssssssssssssssssssssssssssssssss\n"+textH5+"\n");
-						if(!textH5.isEmpty()&&!textH5.isBlank()) {
-							String[] tokensH5 = textH5.split("[^a-zA-Z0-9'-]");
-							wordCount+=tokensH5.length;
-							stemAndRemoveStopWords(textH5,url,"h5",tokens);
-						}
+						if(!h5List.isEmpty()){
+							
+							ArrayList<String>tokensH5=new ArrayList();
+							for(int j=0;j<h5List.size();j++) {
+								String[] tempTokens=h5List.get(j).split("[^a-zA-Z0-9'-]");
+								System.out.println(Arrays.toString(tempTokens)+"\n");
+								tokensH5.addAll(Arrays.asList(tempTokens));
+								System.out.println(tokensH5+"\n");
+							}
+							//display bothhhhhhhhhhhhhhhhhhhhhhhhhh
+							wordCount+=tokensH5.size();
+							stemAndRemoveStopWords(tokensH5,url,"h5",tokens);
+							
+							}
 						Elements h6Tags = words.select("h6");
+						System.out.print("H6Tagssssssssssssssssssssssssssssssssssss\n");
 						String textH6=h6Tags.text();
+						java.util.List<String> h6List = words.select("h6").eachText();
+						System.out.println(Arrays.toString(h6List.toArray()));
+						System.out.print("=============================================\n");
 //						System.out.print("H6Tagssssssssssssssssssssssssssssssssssss\n"+textH6+"\n");
-						if(!textH6.isEmpty()&&!textH6.isBlank()) {
-							String[] tokensH6 = textH6.split("[^a-zA-Z0-9'-]");
-							wordCount+=tokensH6.length;
-							stemAndRemoveStopWords(textH6,url,"h6",tokens);
-						}
+						if(!h6List.isEmpty()){
+							
+							ArrayList<String>tokensH6=new ArrayList();
+							for(int j=0;j<h6List.size();j++) {
+								String[] tempTokens=h6List.get(j).split("[^a-zA-Z0-9'-]");
+								System.out.println(Arrays.toString(tempTokens)+"\n");
+								tokensH6.addAll(Arrays.asList(tempTokens));
+								System.out.println(tokensH6+"\n");
+							}
+							//display bothhhhhhhhhhhhhhhhhhhhhhhhhh
+							wordCount+=tokensH6.size();
+							stemAndRemoveStopWords(tokensH6,url,"h6",tokens);
+							
+							}
 						Elements p = words.select("p");
+						System.out.print("ppTagssssssssssssssssssssssssssssssssssss\n");
 						String textp=p.text();
+						java.util.List<String> pList = words.select("p").eachText();
+						System.out.println(Arrays.toString(pList.toArray()));
+						System.out.print("=============================================\n");
 //						System.out.print("ppppppppppppppppppppppppppppppppppppppppppppp\n"+textp+"\n");
-						if(!textp.isEmpty()&&!textp.isBlank()) {
-							String[] tokensp = textp.split("[^a-zA-Z0-9'-]");
-							wordCount+=tokensp.length;
-							stemAndRemoveStopWords(textp,url,"p",tokens);
-						}
+						if(!pList.isEmpty()){
+							
+							ArrayList<String>tokensp=new ArrayList();
+							for(int j=0;j<pList.size();j++) {
+								String[] tempTokens=pList.get(j).split("[^a-zA-Z0-9'-]");
+								System.out.println(Arrays.toString(tempTokens)+"\n");
+								tokensp.addAll(Arrays.asList(tempTokens));
+								System.out.println(tokensp+"\n");
+							}
+							//display bothhhhhhhhhhhhhhhhhhhhhhhhhh
+							wordCount+=tokensp.size();
+							stemAndRemoveStopWords(tokensp,url,"p",tokens);
+							
+							}
 						Elements titleTags = words.select("title");
+						System.out.print("titleTagssssssssssssssssssssssssssssssssssss\n");
 						String textTitle=titleTags.text();
+						java.util.List<String> titleList = words.select("title").eachText();
+						System.out.println(Arrays.toString(titleList.toArray()));
+						System.out.print("=============================================\n");
 //						System.out.print("textTitlleeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee\n"+textTitle+"\n");
-						if(!textTitle.isEmpty()&&!textTitle.isBlank()) {
-							String[] tokensTitle = textTitle.split("[^a-zA-Z0-9'-]");
-							wordCount+=tokensTitle.length;
-							stemAndRemoveStopWords(textTitle,url,"title",tokens);
-						}
+						if(!titleList.isEmpty()){
+							
+							ArrayList<String>tokensTitle=new ArrayList();
+							for(int j=0;j<titleList.size();j++) {
+								String[] tempTokens=titleList.get(j).split("[^a-zA-Z0-9'-]");
+								System.out.println(Arrays.toString(tempTokens)+"\n");
+								tokensTitle.addAll(Arrays.asList(tempTokens));
+								System.out.println(tokensTitle+"\n");
+							}
+							//display bothhhhhhhhhhhhhhhhhhhhhhhhhh
+							wordCount+=tokensTitle.size();
+							stemAndRemoveStopWords(tokensTitle,url,"title",tokens);
+							
+							}
 						Elements italicTags = words.select("i");
+						System.out.print("italicTagssssssssssssssssssssssssssssssssssss\n");
 						String textItalic=italicTags.text();
+						java.util.List<String> iList = words.select("i").eachText();
+						System.out.println(Arrays.toString(iList.toArray()));
+						System.out.print("=============================================\n");
 //						System.out.print("textItaliccccccccccccccccccccccccccccccccccccccc\n"+textItalic+"\n");
-						if(!textItalic.isEmpty()&&!textItalic.isBlank()) {
-							String[] tokensI = textItalic.split("[^a-zA-Z0-9'-]");
-							wordCount+=tokensI.length;
-							stemAndRemoveStopWords(textItalic,url,"i",tokens);
-						}
+						if(!iList.isEmpty()){
+							
+							ArrayList<String>tokensI=new ArrayList();
+							for(int j=0;j<iList.size();j++) {
+								String[] tempTokens=iList.get(j).split("[^a-zA-Z0-9'-]");
+								System.out.println(Arrays.toString(tempTokens)+"\n");
+								tokensI.addAll(Arrays.asList(tempTokens));
+								System.out.println(tokensI+"\n");
+							}
+							//display bothhhhhhhhhhhhhhhhhhhhhhhhhh
+							wordCount+=tokensI.size();
+							stemAndRemoveStopWords(tokensI,url,"italic",tokens);
+							
+							}
 						Elements boldTags = words.select("b");
+						System.out.print("boldTagssssssssssssssssssssssssssssssssssss\n");
 						String textBold=boldTags.text();
-//						System.out.print("textBolldddddddddddddddddddddddddddddddddddddddddddd\n"+textBold+"\n");
-						if(!textBold.isEmpty()&&!textBold.isBlank()) {
-							String[] tokensBold = textBold.split("[^a-zA-Z0-9'-]");
-							wordCount+=tokensBold.length;
-							stemAndRemoveStopWords(textBold,url,"b",tokens);
-						}
+						java.util.List<String> bList = words.select("b").eachText();
+						System.out.println(Arrays.toString(bList.toArray()));
+						System.out.print("=============================================\n");
+						if(!bList.isEmpty()){
+							
+							ArrayList<String>tokensBold=new ArrayList();
+							for(int j=0;j<bList.size();j++) {
+								String[] tempTokens=bList.get(j).split("[^a-zA-Z0-9'-]");
+								System.out.println(Arrays.toString(tempTokens)+"\n");
+								tokensBold.addAll(Arrays.asList(tempTokens));
+								System.out.println(tokensBold+"\n");
+							}
+						
+							wordCount+=tokensBold.size();
+							stemAndRemoveStopWords(tokensBold,url,"bold",tokens);
+							
+							}
+						
 						}
 						catch(Exception e) {
 							
@@ -236,6 +344,9 @@ public class Indexer {
 						try {
 							if(tokens.isEmpty()==false) {
 								System.out.print("WORD COUNTTTTTTTTTTTTTTTTTTTTTTTTT "+wordCount+"\n");
+								for(int k=0;k<tokens.size();k++) {
+									tokens.get(k).print();
+								}
 							DatabaseConnection.addWords(tokens, url,wordCount);
 							}
 						} catch (SQLException e) {
@@ -243,7 +354,7 @@ public class Indexer {
 							e.printStackTrace();
 						}
 						
-						//document.title
+			
 					}
 					
 					//set done indexing to 1
@@ -271,7 +382,7 @@ public class Indexer {
 			}
 			
 		}
-			public void stemAndRemoveStopWords(String Tags,String url,String pos,ArrayList<Word> tokens) throws IOException, SQLException{
+			public void stemAndRemoveStopWords(ArrayList<String>Tags,String url,String pos,ArrayList<Word> tokens) throws IOException, SQLException{
 				ArrayList<String> stemmedWords=Parser.parse(Tags);
 				int exist=0;
 				for(int i=0;i<stemmedWords.size();i++) {

@@ -118,7 +118,8 @@ public class WebSpider{
 	        System.out.print("CUREENT URL IS "+currentURL+"\n");
 	        Document document=null;
 			try {
-				document = Jsoup.connect(currentURL.toString()).get();
+				//infinite timeOut
+				document = Jsoup.connect(currentURL.toString()).timeout(0).get();
 			
 				
 		          final Elements linksOnPage = document.select("a[href]");
@@ -145,7 +146,7 @@ public class WebSpider{
 		              parts=discoveredURL.toString().split("#");
 		              //check if this hyper link is image,xml
 		              if(parts[0].matches("(.*).jpg")==true||parts[0].matches("(.*)/pdf")==true||parts[0].matches("(.*).pdf")==true||parts[0].matches("(.*).png")==true
-		            		  ||parts[0].matches("(.*).asp")==true)
+		            		  ||parts[0].matches("(.*).asp")==true||parts[0].matches("(.*)/image(.*)")==true||parts[0].matches("(.*)login(.*)")==true)
 		            	  continue;
 		            //check if used protocol is http or https
 		              if(parts[0].matches("http://(.*)")==false && parts[0].matches("https://(.*)")==false) 
