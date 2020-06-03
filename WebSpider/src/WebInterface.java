@@ -1,11 +1,9 @@
 import java.io.*;
-<<<<<<< HEAD
-=======
+
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.DriverManager;
 import java.sql.SQLException;
->>>>>>> 27e107293706f022bffc2cd18c4dc6058c49bc7e
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -15,9 +13,6 @@ import java.util.stream.Stream;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
-<<<<<<< HEAD
-import com.darkprograms.speech.recognizer.GSpeechResponseListener;
-import com.darkprograms.speech.recognizer.GoogleResponse;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -33,16 +28,11 @@ import com.darkprograms.speech.recognizer.GoogleResponse;
 //import marytts.TextToSpeech;
 import marytts.signalproc.effects.JetPilotEffect;
 import net.sourceforge.javaflacencoder.FLACFileWriter;
-=======
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
->>>>>>> 27e107293706f022bffc2cd18c4dc6058c49bc7e
-
 public class WebInterface extends HttpServlet{
 	
-	private final Microphone mic = new Microphone(FLACFileWriter.FLAC);
-	private final GSpeechDuplex duplex = new GSpeechDuplex("AIzaSyBOti4mM-6x9WDnZIjIeyEU21OpBXqWBgw");
 
     public void doGet(HttpServletRequest request, HttpServletResponse response)
     throws IOException, ServletException {
@@ -185,34 +175,4 @@ public class WebInterface extends HttpServlet{
 		
 	}
 }
-/*	DatabaseConnection.DatabaseConnect();
-    
-        response.setContentType("text/html");
-        //String message = "Your Search Query is " + SearchInput ;
-        List<Entry<String, Double>> m = null;
-        long startTime = 0, endTime = 0;
-        
-		try {
-			try {
-				 startTime = System.nanoTime();
-				m = Ranker.ranker(SearchInput);
-				endTime = System.nanoTime();
-			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		finally {
-			 
-			//List<String> stopWords = Files.readAllLines(Paths.get("C:\\Users\\Lenovo\\Downloads\\apache-tomcat-9.0.34\\webapps\\ROOT\\trial2.html"));
-		  	long time = endTime-startTime;
-		  	time = time/1000000000;
- * */
- 
->>>>>>> 27e107293706f022bffc2cd18c4dc6058c49bc7e
+
