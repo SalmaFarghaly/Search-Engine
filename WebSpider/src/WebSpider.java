@@ -32,7 +32,7 @@ public class WebSpider{
     
     public int count =0;
     //maximum number of links saved in database
-    public int threshold=6500;
+    public int threshold=8500;
 
     //startURL is seed set
     private WebSpider(final ArrayList<URL> list,int type) throws SQLException, MalformedURLException {
@@ -301,7 +301,7 @@ public class WebSpider{
         //if ThreadState is saved and he want to crawl "1" that means interrupt has occurred
     	if(DatabaseConnection.isThreadStateEmpty()==true||Integer.parseInt(type)==2) {
 	    	try {
-				reader = new BufferedReader(new FileReader("C:\\Users\\Dell\\git\\repository\\seedlist.txt"));
+				reader = new BufferedReader(new FileReader("C:\\Users\\Dell\\Desktop\\Apt project\\seedlist trial.txt"));
 				String line = reader.readLine();
 				while (line != null) {
 					System.out.println(line);

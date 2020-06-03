@@ -50,11 +50,6 @@ public class Indexer {
 		Thread index5=new Index(++ThreadNo,dummy);
 		index5.setName("Thread5");
 		index5.start();
-		index1.join();
-		index2.join();
-		index3.join();
-		index4.join();
-		index5.join();
 	}
 
 
@@ -125,6 +120,7 @@ public class Indexer {
 					}
 					if(doc!=null) {
 						Elements words = doc.select("h1, h2, h3, h4, h5, h6,p,title,i,b");
+						
 						ArrayList<Word> tokens=new ArrayList<Word>();
 						Integer wordCount=0;
 						try {

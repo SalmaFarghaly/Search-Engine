@@ -28,7 +28,7 @@ public class Parser {
 
 	public static void loadStopwords() throws IOException {
 		
-	    stopWords = Files.readAllLines(Paths.get("C:\\Users\\Dell\\git\\repository\\WebSpider\\english_stopwords.txt"));
+	    stopWords = Files.readAllLines(Paths.get("C:\\Users\\Dell\\git\\Search-Engine\\english_stopwords.txt"));
 	    System.out.print("stopWords\n"+stopWords+"\n");
 	}
 

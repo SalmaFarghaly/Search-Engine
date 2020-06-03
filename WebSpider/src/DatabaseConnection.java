@@ -395,7 +395,7 @@ public class DatabaseConnection {
 
 	//URLs length
 	static public int getDocumentslength (String url) throws SQLException{
-		String SQL="SELECT count(*) FROM indexing WHERE link= '"+url + "'";
+		String SQL="SELECT count FROM url WHERE link= '"+url + "'";
 		PreparedStatement ps= conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
 		ResultSet rs = ps.executeQuery();
 		int n =-1;
