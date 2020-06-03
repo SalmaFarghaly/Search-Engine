@@ -28,7 +28,7 @@ public class Parser {
 
 	public static void loadStopwords() throws IOException {
 		
-	    stopWords = Files.readAllLines(Paths.get("C:\\Users\\Dell\\git\\Search-Engine\\english_stopwords.txt"));
+	    stopWords = Files.readAllLines(Paths.get("C:\\Users\\Dell\\git\\Search-Engine\\WebSpider\\english_stopwords.txt"));
 	    System.out.print("stopWords\n"+stopWords+"\n");
 	}
 
@@ -37,7 +37,7 @@ public class Parser {
 		for(String token:tokens) {
 			if(token.isBlank()==true||token.isEmpty()==true)
 				continue;
-			token.toLowerCase();
+			token=token.toLowerCase();
 			if(stopWords.contains(token)==true)
 				continue;
 			//if it is 4 digit number like birth date save it but without stemming
@@ -47,11 +47,14 @@ public class Parser {
 			else if (isNumeric(token)==true||token.length()==1)
 				continue;	
 			else {
+				
 				String result = Stemmer.Stemming(token);
+				System.out.print("Result"+result+"\n");
 				if(result.isEmpty()==false&&result.isBlank()==false&&result!=null&&isNumeric(result)==false)
 					stemmedTokens.add(result);
 			}
 		}
+		System.out.print("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS"+stemmedTokens+"\n");
 		return stemmedTokens;
 	}
 	

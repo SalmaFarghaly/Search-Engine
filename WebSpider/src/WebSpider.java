@@ -32,7 +32,7 @@ public class WebSpider{
     
     public int count =0;
     //maximum number of links saved in database
-    public int threshold=8500;
+    public int threshold=7500;
 
     //startURL is seed set
     private WebSpider(final ArrayList<URL> list,int type) throws SQLException, MalformedURLException {
@@ -90,7 +90,7 @@ public class WebSpider{
      	///thread number
      	int threadNo;
      	//max number of links
-        public int threshold=6500;
+        public int threshold=7500;
     	
     	public Crawl(URL url,Integer d, int num) {
     		this.link=url;
@@ -152,8 +152,9 @@ public class WebSpider{
 		              if(parts[0].matches("http://(.*)")==false && parts[0].matches("https://(.*)")==false) 
 		            	  continue;
 		            	  //check if it is allowed to enter link
-		              if(robotSafe(new URL(parts[0]))==false )
-		            	  continue;
+		              if(robotSafe(new URL(parts[0]))==false ) {
+		            	  System.out.print("DISALLLLOWWWWEDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD\n");
+		            	  continue;}
 
 		        	
 		 
@@ -274,9 +275,9 @@ public class WebSpider{
             {
                
                 if (robotRule.rule.length() == 0) return true; // allows everything if BLANK
-                if (robotRule.rule == "/") return false;       // allows nothing if /
+                if (robotRule.rule == "/"&&robotRule.userAgent=="*") return false;       // allows nothing if /
 
-                if (robotRule.rule.length() <= path.length())
+                if (robotRule.rule.length() <= path.length()&&robotRule.userAgent=="*")
                 { 
                     String pathCompare = path.substring(0, robotRule.rule.length());
                     if (pathCompare.equals(robotRule.rule)) return false;
