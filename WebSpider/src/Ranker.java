@@ -27,8 +27,8 @@ import java.util.Comparator;
 public class Ranker {
 	static int totalDocuments = 0;
 	private static List<ArrayList<Integer>> adjList;
-
-	static List<String> URLs = new ArrayList<String>(),URLsMoreWords;
+	static boolean isPhraseSearching = false;
+	static List<String> URLs = new ArrayList<String>(),URLsMoreWords = new ArrayList<String>();;
 	static Map< String,Double> Docs =  new HashMap< String,Double>(); 
 	static Connection conn;
 	final static double title_weight = 0.3, h1_weight = 0.15,h2_weight = 0.1,
@@ -41,25 +41,27 @@ public class Ranker {
 			h4= new ArrayList<Integer>(),h5= new ArrayList<Integer>(),
 			h6= new ArrayList<Integer>(),p= new ArrayList<Integer>();
 
-	 public static void main(String[] args) throws IOException, SQLException {
-			//Connect to DataBase
+	// public static void main(String[] args) throws IOException, SQLException {
+	public static List<Entry<String, Double>> ranker (String QueryWord) throws SQLException, IOException	{
+	//Connect to DataBase
 	    	DatabaseConnection.DatabaseConnect();
 	    	conn= DriverManager.getConnection("jdbc:mysql://localhost/SearchEngine?serverTimezone=UTC","root","");
 	    	getTotalDocuments();
 	   
 	   // check if it is a phrase searching case or normal search
-	    String QueryWord =  QueryProcessor.SetOriginalQuery();
+	  //  String QueryWord =  QueryProcessor.SetOriginalQuery();
 	    if( QueryWord.startsWith("\"") & QueryWord.endsWith("\"")) { // it is a phrase searching case
-	    	CalcTfIDF (QueryWord);
+	    	//CalcTfIDF (QueryWord);
+	    	isPhraseSearching = true;
 	    	PhraseSearching(QueryWord);
 	    } 
 	    else { // will make normal search
 	    	CalcTfIDF (QueryWord);
 	    }
-		 System.out.print("-------------------Showing all results----------------------");
-		 System.out.print("\r\n");
-	     System.out.println(entriesSortedByValues(Docs));
-	
+		// System.out.print("-------------------Showing all results----------------------");
+		// System.out.print("\r\n");
+	     //System.out.println(entriesSortedByValues(Docs));
+	 return entriesSortedByValues(Docs);
 		// calculatePageRank();
 	 }
 
@@ -80,56 +82,76 @@ public class Ranker {
             
     } 
 		
-	private static void PhraseSearching(String s) throws IOException {
+	private static void PhraseSearching(String s) throws  SQLException {
 	    String QueryWithoutQuotes =s.replaceAll("^\"+|\"+$", "");
+	    List<String> inputString = null;
+		try {
+			inputString = QueryProcessor.ParsedQuery(s);
+			
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	    for(int i=0; i<inputString.size(); i++) {
+	    
+	    	getUrlsWithTerm(inputString.get(i),0);
+	   }
 	    for (Entry<String, Double> entry : Docs.entrySet())  {
 	    	String url =  entry.getKey();
-        	Document  doc = Jsoup.connect(url).get();
-        	Elements words = doc.select("h1, h2, h3, h4, h5, h6,p,title,i,b");
-        	List<String> TagsInfo = words.select("i").eachText();
-        	String italicInfo = getDocumentinfo(TagsInfo);
-        	TagsInfo = null;TagsInfo = words.select("h1").eachText();
-        	String h1Info = getDocumentinfo(TagsInfo);
-        	TagsInfo = null;TagsInfo = words.select("h2").eachText();
-        	String h2Info = getDocumentinfo(TagsInfo);
-        	TagsInfo = null;TagsInfo = words.select("h3").eachText();
-        	String h3Info = getDocumentinfo(TagsInfo);
-        	TagsInfo = null;TagsInfo = words.select("h4").eachText();
-        	String h4Info = getDocumentinfo(TagsInfo);
-        	TagsInfo = null;TagsInfo = words.select("h5").eachText();
-        	String h5Info = getDocumentinfo(TagsInfo);
-        	TagsInfo = null;TagsInfo = words.select("h6").eachText();
-        	String h6Info = getDocumentinfo(TagsInfo);
-        	TagsInfo = null;TagsInfo = words.select("b").eachText();
-        	String boldInfo = getDocumentinfo(TagsInfo);
-        	TagsInfo = null;TagsInfo = words.select("p").eachText();
-        	String paragraphInfo = getDocumentinfo(TagsInfo);
-        	TagsInfo = null;TagsInfo = words.select("title").eachText();
-        	String titleInfo = getDocumentinfo(TagsInfo);
-        	double titleFreq = 0,paragraphFreq = 0,h1Freq = 0,h2Freq = 0,h3Freq = 0,
-        	h4Freq = 0,h5Freq = 0,h6Freq = 0,boldFreq = 0,italicFreq = 0;
-        	titleFreq =  getFreqREGEX ( QueryWithoutQuotes,titleInfo);
-        	h1Freq =  getFreqREGEX ( QueryWithoutQuotes,h1Info);
-        	h2Freq =  getFreqREGEX ( QueryWithoutQuotes,h2Info);
-        	h3Freq =  getFreqREGEX ( QueryWithoutQuotes,h3Info);
-        	h4Freq =  getFreqREGEX ( QueryWithoutQuotes,h4Info);
-        	h5Freq =  getFreqREGEX ( QueryWithoutQuotes,h5Info);
-        	h6Freq =  getFreqREGEX ( QueryWithoutQuotes,h6Info);
-        	italicFreq =  getFreqREGEX ( QueryWithoutQuotes,italicInfo);
-        	boldFreq =  getFreqREGEX ( QueryWithoutQuotes,boldInfo);
-        	paragraphFreq =  getFreqREGEX ( QueryWithoutQuotes,paragraphInfo);
-        	System.out.println("Frequency for url: "+url+" "+titleFreq+" "+ h1Freq+" "+h2Freq+" "+h3Freq+" "+h4Freq+" "+h5Freq+" "+h6Freq+" "+paragraphFreq+" "+italicFreq);
-        	double total =  (double) ( (title_weight*titleFreq) + (h1_weight*h1Freq) + (h2_weight*h2Freq) + (h3_weight*h3Freq) + (h4_weight*h4Freq) + 
-        			(h5_weight*h5Freq) + (h6_weight*h6Freq) + (italic_weight*italicFreq) + (bold_weight*boldFreq) + (p_weight*paragraphFreq) )   ;
-        	System.out.println("total: "+total);
-        	if(total ==0) {
-        		Docs.put(url, (double) 0);
-        	}
-        	else {
-        		Double value = entry.getValue();
-        		value = value + total;
-        		Docs.put(url, value);
-        	}
+	    	
+        	Document doc = null;
+			try {
+				doc = Jsoup.connect(url).get();
+				Elements words = doc.select("h1, h2, h3, h4, h5, h6,p,title,i,b");
+	        	List<String> TagsInfo = words.select("i").eachText();
+	        	String italicInfo = getDocumentinfo(TagsInfo);
+	        	TagsInfo = null;TagsInfo = words.select("h1").eachText();
+	        	String h1Info = getDocumentinfo(TagsInfo);
+	        	TagsInfo = null;TagsInfo = words.select("h2").eachText();
+	        	String h2Info = getDocumentinfo(TagsInfo);
+	        	TagsInfo = null;TagsInfo = words.select("h3").eachText();
+	        	String h3Info = getDocumentinfo(TagsInfo);
+	        	TagsInfo = null;TagsInfo = words.select("h4").eachText();
+	        	String h4Info = getDocumentinfo(TagsInfo);
+	        	TagsInfo = null;TagsInfo = words.select("h5").eachText();
+	        	String h5Info = getDocumentinfo(TagsInfo);
+	        	TagsInfo = null;TagsInfo = words.select("h6").eachText();
+	        	String h6Info = getDocumentinfo(TagsInfo);
+	        	TagsInfo = null;TagsInfo = words.select("b").eachText();
+	        	String boldInfo = getDocumentinfo(TagsInfo);
+	        	TagsInfo = null;TagsInfo = words.select("p").eachText();
+	        	String paragraphInfo = getDocumentinfo(TagsInfo);
+	        	TagsInfo = null;TagsInfo = words.select("title").eachText();
+	        	String titleInfo = getDocumentinfo(TagsInfo);
+	        	double titleFreq = 0,paragraphFreq = 0,h1Freq = 0,h2Freq = 0,h3Freq = 0,
+	        	h4Freq = 0,h5Freq = 0,h6Freq = 0,boldFreq = 0,italicFreq = 0;
+	        	titleFreq =  getFreqREGEX ( QueryWithoutQuotes,titleInfo);
+	        	h1Freq =  getFreqREGEX ( QueryWithoutQuotes,h1Info);
+	        	h2Freq =  getFreqREGEX ( QueryWithoutQuotes,h2Info);
+	        	h3Freq =  getFreqREGEX ( QueryWithoutQuotes,h3Info);
+	        	h4Freq =  getFreqREGEX ( QueryWithoutQuotes,h4Info);
+	        	h5Freq =  getFreqREGEX ( QueryWithoutQuotes,h5Info);
+	        	h6Freq =  getFreqREGEX ( QueryWithoutQuotes,h6Info);
+	        	italicFreq =  getFreqREGEX ( QueryWithoutQuotes,italicInfo);
+	        	boldFreq =  getFreqREGEX ( QueryWithoutQuotes,boldInfo);
+	        	paragraphFreq =  getFreqREGEX ( QueryWithoutQuotes,paragraphInfo);
+	        	System.out.println("Frequency for url: "+url+" "+titleFreq+" "+ h1Freq+" "+h2Freq+" "+h3Freq+" "+h4Freq+" "+h5Freq+" "+h6Freq+" "+paragraphFreq+" "+italicFreq);
+	        	double total =  (double) ( (title_weight*titleFreq) + (h1_weight*h1Freq) + (h2_weight*h2Freq) + (h3_weight*h3Freq) + (h4_weight*h4Freq) + 
+	        			(h5_weight*h5Freq) + (h6_weight*h6Freq) + (italic_weight*italicFreq) + (bold_weight*boldFreq) + (p_weight*paragraphFreq) )   ;
+	        	System.out.println("total: "+total);
+	        	if(total ==0) {
+	        		Docs.put(url, (double) 0);
+	        	}
+	        	else {
+	        		Double value = entry.getValue();
+	        		value = value + total;
+	        		Docs.put(url, value);
+	        	}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        	
         		
         	
 	    }
@@ -182,70 +204,16 @@ public class Ranker {
 		// TODO Auto-generated method stub
 		int Docs_Contain_term = 0;
 
-		URLsMoreWords = new ArrayList<String>();
 		
+		Docs_Contain_term = getUrlsWithTerm(string ,Docs_Contain_term);
 				
-		//----------------- URLs that contain that word and its frequency Query ---------------------//
-		String SQL="SELECT link,title,h1,h2,h3,h4,h5,h6,p,italic,bold FROM indexing where word = '"+string+"'";
-		PreparedStatement ps= conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
-		ResultSet rs = ps.executeQuery();
-		   while ( rs.next() ) {
-			// get the total number of docs containing this word 
-			  Docs_Contain_term++;
-	    	  String s = rs.getString(1);
-	    	  System.out.println("filling... "+s);  
-	    //	  int tfCount = rs.getInt(2);
-	    	  int title = rs.getInt(2);
-	    	  int h11 = rs.getInt(3);
-	    	  int h22 = rs.getInt(4);
-	    	  int h33 = rs.getInt(5);
-	    	  int h44 = rs.getInt(6);
-	    	  int h55 = rs.getInt(7);
-	    	  int h66 = rs.getInt(8);
-	    	  int P = rs.getInt(9);
-	    	  int italic = rs.getInt(10);
-	    	  int bold = rs.getInt(11);
-	    	  if(!URLs.contains(s)) {
-		    	 URLs.add(s);
-		    	 //TF.add(tfCount);
-		    	 Title.add(title);
-		    	 h1.add(h11);
-		    	 h2.add(h22);
-		    	 h3.add(h33);
-		    	 h4.add(h44);
-		    	 h5.add(h55);
-		    	 h6.add(h66);
-		    	 p.add(P);
-		    	 Italic.add(italic);
-		    	 Bold.add(bold);
-		    }
-	    	  else {
-	    		 URLsMoreWords.add(s);
-	    		 int index = URLs.indexOf(s);///---- continue here
-
-	    		 //TF.add(index,tfCount);
-	    		 Title.add(index,title);
-			     h1.add(index,h11);
-			     h2.add(index,h22);
-			     h3.add(index,h33);
-			     h4.add(index,h44);
-			     h5.add(index,h55);
-			     h6.add(index,h66);
-			     p.add(index,P);
-			     Italic.add(index,italic);
-			     Bold.add(index,bold);
-	    	  }
-	       }
-	    //--------------------- End of Query -------------------------------------------------------------	  
-	       
-	       for(int i=0; i<URLsMoreWords.size(); i++) {
-	    	   System.out.print("More words...."+URLsMoreWords.get(i));
-	    	   System.out.print("\r\n");
-	       }
-	       for(int i=0; i<URLs.size(); i++) {
-	    	   System.out.print("Single word...."+URLs.get(i));
-	    	   System.out.print("\r\n");
-	       }
+		       
+		/*
+		 * for(int i=0; i<URLsMoreWords.size(); i++) {
+		 * System.out.print("More words...."+URLsMoreWords.get(i));
+		 * System.out.print("\r\n"); } for(int i=0; i<URLs.size(); i++) {
+		 * System.out.print("Single word...."+URLs.get(i)); System.out.print("\r\n"); }
+		 */
 	       System.out.println("Documents containing the term"+Docs_Contain_term);
 		//doc.getTermFrequency() * Math.log10(totalDocuments / docListLength)
 		 for(int i=0; i<URLs.size(); i++) {
@@ -268,28 +236,85 @@ public class Ranker {
 				Docs.put(URL, tfIdf);
 			 }
 			 else {
-
-				  
 				  System.out.print("\r\n");
 			//	 int index = Documents.indexOf(d);
 				  Double D = Docs.get(URL);
 				  System.out.print("trying to get the doubled URL"+URL+ " tfidf old"+D);
 				  D += tfIdf;
-				  D = D*2;
+				  D = D*10;
 				  System.out.print(" tfidf new"+D);
-
 				  Docs.put(URL, D); // check mappp
-				
 			 }
 			 System.out.print("\r\n");
 		 }
 		 // To be removed
-		 System.out.print("-------------------Showing all Normal Search results----------------------");
-		 System.out.print("\r\n");
-	     System.out.println(entriesSortedByValues(Docs));
-					
-		 
+		/*
+		 * System.out.
+		 * print("-------------------Showing all Normal Search results----------------------"
+		 * ); System.out.print("\r\n"); System.out.println(entriesSortedByValues(Docs));
+		 */
 		}
+	
+	public static int getUrlsWithTerm (String string,int Docs_Contain_term) throws SQLException {
+		
+		//----------------- URLs that contain that word and its frequency Query ---------------------//
+				String SQL="SELECT link,title,h1,h2,h3,h4,h5,h6,p,italic,bold FROM indexing where word = '"+string+"'";
+				PreparedStatement ps= conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
+				ResultSet rs = ps.executeQuery();
+				   while ( rs.next() ) {
+					// get the total number of docs containing this word 
+					  Docs_Contain_term++;
+			    	  String s = rs.getString(1);
+			    	  System.out.println("filling... "+s);  
+			    //	  int tfCount = rs.getInt(2);
+			    	  int title = rs.getInt(2);
+			    	  int h11 = rs.getInt(3);
+			    	  int h22 = rs.getInt(4);
+			    	  int h33 = rs.getInt(5);
+			    	  int h44 = rs.getInt(6);
+			    	  int h55 = rs.getInt(7);
+			    	  int h66 = rs.getInt(8);
+			    	  int P = rs.getInt(9);
+			    	  int italic = rs.getInt(10);
+			    	  int bold = rs.getInt(11);
+			    	 
+				    	  if(!URLs.contains(s)) {
+					    	 URLs.add(s);
+					    	 //TF.add(tfCount);
+					    	 Title.add(title);
+					    	 h1.add(h11);
+					    	 h2.add(h22);
+					    	 h3.add(h33);
+					    	 h4.add(h44);
+					    	 h5.add(h55);
+					    	 h6.add(h66);
+					    	 p.add(P);
+					    	 Italic.add(italic);
+					    	 Bold.add(bold);
+					    }
+				    	  else {
+				    		 URLsMoreWords.add(s);
+				    		 int index = URLs.indexOf(s);///---- continue here
+				    		 if(isPhraseSearching) {
+					    		  Docs.put(s, (double) (title+h11+h22+h33+h44+h55+h66+P+italic+bold));
+					    	  }
+				    		 //TF.add(index,tfCount);
+				    		 Title.add(index,title);
+						     h1.add(index,h11);
+						     h2.add(index,h22);
+						     h3.add(index,h33);
+						     h4.add(index,h44);
+						     h5.add(index,h55);
+						     h6.add(index,h66);
+						     p.add(index,P);
+						     Italic.add(index,italic);
+						     Bold.add(index,bold);
+				    	  }
+			    	 }
+			       
+			    //--------------------- End of Query -------------------------------------------------------------	  
+			return Docs_Contain_term;
+	}
 	//Return map in descending order 
 	static <K,V extends Comparable<? super V>>List<Entry<K, V>> entriesSortedByValues(Map<K,V> map) {
 
@@ -306,6 +331,7 @@ public class Ranker {
 		
 		return sortedEntries;
 	}
+//-------------------------------------------- PAGE RANK ALGORITHM ------------------------------	
 	public static boolean didConverge(int iterations,double[]pageRank,double[]old_pageRank) {
 		double multiplicationFactor = 0;
 		if (iterations == 0) {

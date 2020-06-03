@@ -144,6 +144,7 @@ public class Indexer {
 					}
 					if(doc!=null) {
 						Elements words = doc.select("h1, h2, h3, h4, h5, h6,p,title,i,b");
+						
 						ArrayList<Word> tokens=new ArrayList<Word>();
 						Integer wordCount=0;
 						try {
@@ -206,6 +207,9 @@ public class Indexer {
 						}
 						Elements titleTags = words.select("title");
 						String textTitle=titleTags.text();
+						String title = doc.title();
+						textTitle += " ";
+						textTitle += title;
 //						System.out.print("textTitlleeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee\n"+textTitle+"\n");
 						if(!textTitle.isEmpty()&&!textTitle.isBlank()) {
 							String[] tokensTitle = textTitle.split("[^a-zA-Z0-9'-]");
@@ -236,6 +240,14 @@ public class Indexer {
 						try {
 							if(tokens.isEmpty()==false) {
 								System.out.print("WORD COUNTTTTTTTTTTTTTTTTTTTTTTTTT "+wordCount+"\n");
+								for(int i=0; i<tokens.size(); i++) {
+									System.out.print(tokens.get(i));
+									System.out.print("\r\n");
+									
+
+									 
+								}
+								
 							DatabaseConnection.addWords(tokens, url,wordCount);
 							}
 						} catch (SQLException e) {
