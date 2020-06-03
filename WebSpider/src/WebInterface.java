@@ -47,7 +47,7 @@ public class WebInterface extends HttpServlet{
                 		"<body>\n" + 
                 		"    <div id=\"header\">\n" + 
                 		"        <div id=\"topbar\">\n" + 
-                		"            <img id=\"searchbarimage\" src=\"images/googlelogo_color_92x30dp.png\" />\n" + 
+                		"             <img id=\"searchbarimage\" src=\"img/bing.png\" />\n" + 
                 		"            <div id=\"searchbar\" type=\"text\">\n" + 
                 		"                <input id=\"searchbartext\" type=\"text\" value=\""+SearchInput +" \"/>");
             	RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/part1.html");

@@ -73,21 +73,18 @@ public class Ranker {
 		// calculatePageRank();
 	 }
 
-	private static void CombinationPR_TFIDF() throws SQLException {
+	private static double CombinationPR_TFIDF(String key,double Oldrank) throws SQLException {
 		// TODO Auto-generated method stub
 		 // using for-each loop for iteration over Map.entrySet() 
-        for (Entry<String, Double> entry : Docs.entrySet())  {
-        	System.out.println("Key = " + entry.getKey() + 
-                    ", Value = " + entry.getValue()); 
-        	Double value = entry.getValue();
-        	String key =  entry.getKey();
+        	System.out.println("Page Rank Calculation Key = " + key + 
+                    ", Value = " + Oldrank); 
+        	
         	double pr = DatabaseConnection.getLinkPageRank(key);
-        	double NewRank = 0.75 * value + 0.25 * pr ; 
-        	Docs.put(key, NewRank);
-        	System.out.println("Key = " + entry.getKey() + 
-                    ", Value = " + entry.getValue()); 
-        }
-            
+        	double NewRank = 0.75 * Oldrank + 0.25 * pr ; 
+        	
+           	System.out.println("Page Rank Calculation Key = " + key + 
+                    ", Value = " + Oldrank); 
+           	return NewRank;
     } 
 		
 	private static void PhraseSearching(String s,List<String> ParsedQuery) throws  SQLException {
@@ -181,17 +178,7 @@ public class Ranker {
 	    	for(int i=0; i<inputString.size(); i++) {
 	    		getFilteredDocuments(inputString.get(i));
 		   }
-	     if(!Docs.isEmpty()) {
-		   	 double maxValueInMap=(Collections.max(Docs.values()));  // This will return max value in the Hashmap
-		     System.out.print("\r\n");
-		     System.out.print("Max value: "+maxValueInMap );
-		     for (Entry<String, Double> entry : Docs.entrySet()) {  // Iterate through hashmap
-		            if (entry.getValue()==maxValueInMap) {
-		                System.out.println(" "+entry.getKey());     // Print the key with max value
-		            }
-		        }
-	    }
-	     CombinationPR_TFIDF();
+
 	     System.out.print("\r\n");
 	
     }
@@ -200,18 +187,14 @@ public class Ranker {
 
 		// TODO Auto-generated method stub
 		int Docs_Contain_term = 0;
-
-		
 		Docs_Contain_term = getUrlsWithTerm(string ,Docs_Contain_term);
-				
-		       
 		/*
 		 * for(int i=0; i<URLsMoreWords.size(); i++) {
 		 * System.out.print("More words...."+URLsMoreWords.get(i));
 		 * System.out.print("\r\n"); } for(int i=0; i<URLs.size(); i++) {
 		 * System.out.print("Single word...."+URLs.get(i)); System.out.print("\r\n"); }
 		 */
-	       System.out.println("Documents containing the term"+Docs_Contain_term);
+	       System.out.println("Documents containing the term "+Docs_Contain_term);
 		//doc.getTermFrequency() * Math.log10(totalDocuments / docListLength)
 		 for(int i=0; i<URLs.size(); i++) {
 			 // get the number of terms in the single document
@@ -230,7 +213,8 @@ public class Ranker {
 			  double tfIdf = TFCalc * Math.log10(IDF);	
 			  System.out.print("---- total---- "+TFCalc * Math.log10(IDF));
 			 if(!URLsMoreWords.contains(URL)) {
-				Docs.put(URL, tfIdf);
+				double NewRank = CombinationPR_TFIDF(URL,tfIdf); 
+				Docs.put(URL, NewRank);
 			 }
 			 else {
 				  System.out.print("\r\n");
@@ -424,15 +408,15 @@ public class Ranker {
 		totalDocuments= DatabaseConnection.getTotalDocuments();
 	}
 	
-	
-
-	
-
-		
-	
-
-	
-	
+// For Calculating Max URL
+	/*
+	 * if(!Docs.isEmpty()) { double maxValueInMap=(Collections.max(Docs.values()));
+	 * // This will return max value in the Hashmap System.out.print("\r\n");
+	 * System.out.print("Max value: "+maxValueInMap ); for (Entry<String, Double>
+	 * entry : Docs.entrySet()) { // Iterate through hashmap if
+	 * (entry.getValue()==maxValueInMap) { System.out.println(" "+entry.getKey());
+	 * // Print the key with max value } } }
+	 */	
 	
 }
 
