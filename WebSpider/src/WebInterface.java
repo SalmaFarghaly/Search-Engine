@@ -129,13 +129,15 @@ public class WebInterface extends HttpServlet {
 							}
 						}
 					}
-					System.out.println("Adding document to html file");
+					
 					if (replaceString != null && PageList <10) {
+						System.out.println("Adding document to html file");
 						out.println("    <div class=\"searchresult\">\n" + "            <h2><a href=\"" + url + "\">"
 								+ title + "</a></h2>\n" + "            <h3>" + url + "</h3> \n" + "            <p>"
 								+ replaceString + "</p>\n" + "        </div>\n");
 					}
-					if(replaceString==null)	{
+					if(replaceString==null && PageList<10)	{
+						System.out.println("Adding document to html file WITHOUT SNIPPET");
 						out.println("    <div class=\"searchresult\">\n" + "            <h2><a href=\"" + url + "\">"
 								+ title + "</a></h2>\n" + "            <h3>" + url + "</h3> \n" + "            <p>"
 								+ "" + "</p>\n" + "        </div>\n");
