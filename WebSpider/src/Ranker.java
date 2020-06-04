@@ -201,7 +201,7 @@ public class Ranker {
 		 * System.out.print("More words...."+URLsMoreWords.get(i));
 		 * System.out.print("\r\n"); } for(int i=0; i<URLs.size(); i++) {
 		 * System.out.print("Single word...."+URLs.get(i)); System.out.print("\r\n"); }
-		 */
+		 aaaa*/
 	       System.out.println("Documents containing the term "+Docs_Contain_term);
 		//doc.getTermFrequency() * Math.log10(totalDocuments / docListLength)
 		 for(int i=0; i<URLs.size(); i++) {
