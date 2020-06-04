@@ -395,8 +395,9 @@ public class DatabaseConnection {
 
 	//URLs length
 	static public int getDocumentslength (String url) throws SQLException{
-		String SQL="SELECT count FROM url WHERE link= '"+url + "'";
+		String SQL="SELECT count FROM url WHERE Link= ?";
 		PreparedStatement ps= conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
+		ps.setString(1,url);
 		ResultSet rs = ps.executeQuery();
 		int n =-1;
 		String x = null;
@@ -492,8 +493,9 @@ public class DatabaseConnection {
 		
 	public static double getLinkPageRank(String key) throws SQLException {
 		// TODO Auto-generated method stub
-		String SQL="Select rank FROM url WHERE Link= '"+key+"'";
+		String SQL="Select rank FROM url WHERE Link= ?";
 		PreparedStatement ps= conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
+		ps.setString(1, key);
 		ResultSet rs = ps.executeQuery();
 		double d = 0;
 		if(rs.next()) {

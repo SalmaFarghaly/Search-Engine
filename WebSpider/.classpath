@@ -6,17 +6,8 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/Dell/Desktop/Apt/apache-tomcat-9.0.34/lib/servlet-api.jar"/>
-	<classpathentry kind="lib" path="D:/jsoup-1.13.1.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Dell/Desktop/Apt project/Java-Google-Speech-Recognizer-master/libraries/marytts-builder-5.2-jar-with-dependencies.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Dell/Desktop/Apt project/Java-Google-Speech-Recognizer-master/libraries/marytts-lang-en-5.2.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Dell/Desktop/Apt project/Java-Google-Speech-Recognizer-master/libraries/voice-cmu-slt-hsmm-5.2.jar"/>
-	<classpathentry kind="lib" path="D:/mysql-connector-java-8.0.19/mysql-connector-java-8.0.19/mysql-connector-java-8.0.19.jar"/>
-	<classpathentry kind="lib" path="D:/java-speech-api-master/java-speech-api-1.13.0-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Dell/.m2/repository/com/github/axet/java-flac-encoder/0.3.8/java-flac-encoder-0.3.8.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Dell/.m2/repository/com/github/axet/java-flac-encoder/0.3.8/java-flac-encoder-0.3.8-sources.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Dell/.m2/repository/com/github/goxr3plus/java-google-speech-api/V2.1/java-google-speech-api-V2.1.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Dell/.m2/repository/com/github/goxr3plus/java-google-speech-api/V2.1/java-google-speech-api-V2.1-sources.jar"/>
-	<classpathentry kind="lib" path="D:/google-api-java-client-master.zip"/>
+	<classpathentry kind="lib" path="C:/Users/Lenovo/Downloads/apache-tomcat-9.0.34/lib/servlet-api.jar"/>
+	<classpathentry kind="lib" path="D:/Senior-1 2nd sem/Advanced programming tech/Project APT/project apt material/mysql-connector-java-8.0.19/mysql-connector-java-8.0.19.jar"/>
+	<classpathentry kind="lib" path="D:/Senior-1 2nd sem/Advanced programming tech/Project APT/project apt material/jsoup-1.13.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

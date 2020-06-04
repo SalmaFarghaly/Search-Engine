@@ -20,14 +20,8 @@ import java.util.ArrayList;
 
 import javax.sound.sampled.LineUnavailableException;
 
-import com.darkprograms.speech.microphone.Microphone;
-import com.darkprograms.speech.recognizer.GSpeechDuplex;
-import com.darkprograms.speech.recognizer.GSpeechResponseListener;
-import com.darkprograms.speech.recognizer.GoogleResponse;
 
 //import marytts.TextToSpeech;
-import marytts.signalproc.effects.JetPilotEffect;
-import net.sourceforge.javaflacencoder.FLACFileWriter;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -38,7 +32,7 @@ public class WebInterface extends HttpServlet{
     throws IOException, ServletException {
         String SearchInput = request.getParameter("SearchInput");
         double time = 0;
-        if (SearchInput != null) //if action is not null
+        if (SearchInput != null && SearchInput != "") //if action is not null
         {
         	String names[] = SearchInput. split(" ");
         	//time = "hi";
@@ -143,8 +137,8 @@ public class WebInterface extends HttpServlet{
 		 		System.out.println("Adding document to html file");
 		 		if(replaceString!=null) {
 	        		out.println("    <div class=\"searchresult\">\n" + 
-	        				"            <h2>"+title+"</h2>\n" + 
-	        				"            <a>"+url+"</a> <button> </button>\n" + 
+	        				"            <h2><a href=\""+url+"\">"+title+"</a></h2>\n" + 
+	        				"            <h3>"+url+"</h3> \n" + 
 	        				"            <p>"+replaceString+"</p>\n" + 
 	        				"        </div>\n"  
 	        				);

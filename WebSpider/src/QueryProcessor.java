@@ -48,12 +48,16 @@ public class QueryProcessor {
 		List<String> parsedQuery=ParsedQuery(s);
 		System.out.print("parsed "+parsedQuery);
 		String names[] = s. split(" ");
+		long start = System.currentTimeMillis();
 		Map<String, Double> output = Ranker.ranker(s,parsedQuery);
 		System.out.print("-------------------Showing all results----------------------");
 		  for (Entry<String, Double> entry : output.entrySet())  {
 	        	System.out.println("Key final= " + entry.getKey() + 
 	                    ", Value final= " + entry.getValue()); 
 		  }
+		  long end = System.currentTimeMillis();
+	      //finding the time difference and converting it into seconds
+	      float sec = (end - start) / 1000F; System.out.println("Time of Ranker: "+ sec + " seconds");
 		/*
 		 * //----------------------------------------- getting url content
 		 * ----------------------------- String url =entry.getKey(); Document doc;
