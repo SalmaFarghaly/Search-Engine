@@ -7,9 +7,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-
-import marytts.util.math.ArrayUtils;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;

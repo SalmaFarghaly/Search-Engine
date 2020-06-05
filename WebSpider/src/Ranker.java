@@ -73,21 +73,18 @@ public class Ranker {
 		// calculatePageRank();
 	 }
 
-	private static void CombinationPR_TFIDF() throws SQLException {
+	private static double CombinationPR_TFIDF(String key,double Oldrank) throws SQLException {
 		// TODO Auto-generated method stub
 		 // using for-each loop for iteration over Map.entrySet() 
-        for (Entry<String, Double> entry : Docs.entrySet())  {
-        	System.out.println("Key = " + entry.getKey() + 
-                    ", Value = " + entry.getValue()); 
-        	Double value = entry.getValue();
-        	String key =  entry.getKey();
+        	System.out.println("Page Rank Calculation Key = " + key + 
+                    ", Value = " + Oldrank); 
+        	
         	double pr = DatabaseConnection.getLinkPageRank(key);
-        	double NewRank = 0.75 * value + 0.25 * pr ; 
-        	Docs.put(key, NewRank);
-        	System.out.println("Key = " + entry.getKey() + 
-                    ", Value = " + entry.getValue()); 
-        }
-            
+        	double NewRank = 0.75 * Oldrank + 0.25 * pr ; 
+        	
+           	System.out.println("Page Rank Calculation Key = " + key + 
+                    ", Value = " + Oldrank); 
+           	return NewRank;
     } 
 		
 	private static void PhraseSearching(String s,List<String> ParsedQuery) throws  SQLException {
@@ -140,14 +137,22 @@ public class Ranker {
 	        	System.out.println("Frequency for url: "+url+" "+titleFreq+" "+ h1Freq+" "+h2Freq+" "+h3Freq+" "+h4Freq+" "+h5Freq+" "+h6Freq+" "+paragraphFreq+" "+italicFreq);
 	        	double total =  (double) ( (title_weight*titleFreq) + (h1_weight*h1Freq) + (h2_weight*h2Freq) + (h3_weight*h3Freq) + (h4_weight*h4Freq) + 
 	        			(h5_weight*h5Freq) + (h6_weight*h6Freq) + (italic_weight*italicFreq) + (bold_weight*boldFreq) + (p_weight*paragraphFreq) )   ;
+	        	double newRank= 0.0;
+	        	if(isPhraseSearching)
+	        		newRank = CombinationPR_TFIDF(url,total);
 	        	System.out.println("total: "+total);
 	        	if(total ==0) {
 	        		Docs.put(url, (double) 0);
 	        	}
 	        	else {
-	        		Double value = entry.getValue();
-	        		value = value + total;
-	        		Docs.put(url, value);
+	        		if (isPhraseSearching)
+	        			Docs.put(url, newRank);
+	        		else {
+	        			Double value = entry.getValue();
+		        		value = value + total;
+		        		Docs.put(url, value);
+	        		}
+	        		
 	        	}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -181,17 +186,7 @@ public class Ranker {
 	    	for(int i=0; i<inputString.size(); i++) {
 	    		getFilteredDocuments(inputString.get(i));
 		   }
-	     if(!Docs.isEmpty()) {
-		   	 double maxValueInMap=(Collections.max(Docs.values()));  // This will return max value in the Hashmap
-		     System.out.print("\r\n");
-		     System.out.print("Max value: "+maxValueInMap );
-		     for (Entry<String, Double> entry : Docs.entrySet()) {  // Iterate through hashmap
-		            if (entry.getValue()==maxValueInMap) {
-		                System.out.println(" "+entry.getKey());     // Print the key with max value
-		            }
-		        }
-	    }
-	     CombinationPR_TFIDF();
+
 	     System.out.print("\r\n");
 	
     }
@@ -200,25 +195,21 @@ public class Ranker {
 
 		// TODO Auto-generated method stub
 		int Docs_Contain_term = 0;
-
-		
 		Docs_Contain_term = getUrlsWithTerm(string ,Docs_Contain_term);
-				
-		       
 		/*
 		 * for(int i=0; i<URLsMoreWords.size(); i++) {
 		 * System.out.print("More words...."+URLsMoreWords.get(i));
 		 * System.out.print("\r\n"); } for(int i=0; i<URLs.size(); i++) {
 		 * System.out.print("Single word...."+URLs.get(i)); System.out.print("\r\n"); }
-		 */
-	       System.out.println("Documents containing the term"+Docs_Contain_term);
+		 aaaa*/
+	       System.out.println("Documents containing the term "+Docs_Contain_term);
 		//doc.getTermFrequency() * Math.log10(totalDocuments / docListLength)
 		 for(int i=0; i<URLs.size(); i++) {
 			 // get the number of terms in the single document
 			 String URL = URLs.get(i);
 			 if(Docs.containsKey(URL) & !URLsMoreWords.contains(URL) ) // was calculated before
 				continue;	
-			  System.out.println("Calculating for URL "+URL);
+			  System.out.println("Calculating for URL "+URL+" For word "+string);
 			  int DocLength = DatabaseConnection.getDocumentslength(URL);
 			  System.out.print("Length: "+ DocLength);
 			  double IDF = (totalDocuments / Docs_Contain_term);
@@ -230,7 +221,8 @@ public class Ranker {
 			  double tfIdf = TFCalc * Math.log10(IDF);	
 			  System.out.print("---- total---- "+TFCalc * Math.log10(IDF));
 			 if(!URLsMoreWords.contains(URL)) {
-				Docs.put(URL, tfIdf);
+				double NewRank = CombinationPR_TFIDF(URL,tfIdf); 
+				Docs.put(URL, NewRank);
 			 }
 			 else {
 				  System.out.print("\r\n");
@@ -314,6 +306,44 @@ public class Ranker {
 			    //--------------------- End of Query -------------------------------------------------------------	  
 			return Docs_Contain_term;
 	}
+	
+public static int getUrlsWithAllTerms (String[] query,int Docs_Contain_term) throws SQLException {
+		
+		//----------------- URLs that contain that ALL Query words ---------------------//
+				int count = query.length;
+				String SQL="SELECT link,title,h1,h2,h3,h4,h5,h6,p,italic,bold FROM indexing where ";// word = '"+string+"'";
+				for(int i=0; i<query.length; i++) {
+					SQL = SQL +"word = "+ "'"+ query[i] +"'";
+					count --;
+					if (count>0) {
+						SQL = SQL + " AND ";
+					}
+				}
+				PreparedStatement ps= conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
+				ResultSet rs = ps.executeQuery();
+				   while ( rs.next() ) {
+					 
+						//int tfCount = rs.getInt(2);
+				       String s = rs.getString(1);
+				       System.out.println("filling... "+s);  
+				       int title = rs.getInt(2);
+						 int h11 = rs.getInt(3);
+						 int h22 = rs.getInt(4);
+						 int h33 = rs.getInt(5);
+						 int h44 = rs.getInt(6);
+						 int h55 = rs.getInt(7);
+						 int h66 = rs.getInt(8);
+						 int P = rs.getInt(9);
+						 int italic = rs.getInt(10);
+						 int bold = rs.getInt(11);
+					// get the total number of docs containing this word 
+					   Docs.put(s, (double) (title+h11+h22+h33+h44+h55+h66+P+italic+bold));
+				    }
+			    	 
+			       
+			    //--------------------- End of Query -------------------------------------------------------------	  
+			return Docs_Contain_term;
+	}
 	//Return map in descending order 
 	static <K,V extends Comparable<? super V>>List<Entry<K, V>> entriesSortedByValues(Map<K,V> map) {
 
@@ -383,8 +413,6 @@ public class Ranker {
 			double curOutbounds=(double)DatabaseConnection.getOutboundCount(i);
 			if(curOutbounds!=0)
 				contribution[i]=DatabaseConnection.getOutboundCount(i);
-//			else
-//				contribution[i]=initProbability;
 		}
 		
 		//fill pageRank Array
@@ -395,7 +423,7 @@ public class Ranker {
 		//loop until convergences (calculate Page Rank && didConverge)
 		System.out.print(initProbability+" probbbbbbbbbbbbbbbbbbbbbbbbbbb\n");
 		int iteration=-1;
-//		do {
+		do {
 			double[] newPageRankArray = new double[nodeCount]; 
 			double intermediateCalculation;
 			for (int i = 0; i < pageRank.length; i++) {
@@ -413,7 +441,7 @@ public class Ranker {
 			old_pageRank = pageRank;
 			pageRank = newPageRankArray;
 			iteration++;
-//		}while(!didConverge(iteration,pageRank,old_pageRank));
+		}while(!didConverge(iteration,pageRank,old_pageRank));
 //		for(int i=0;i<nodeCount;i++)
 //			System.out.print(pageRank[i]+"\n");
 		
@@ -428,15 +456,15 @@ public class Ranker {
 		totalDocuments= DatabaseConnection.getTotalDocuments();
 	}
 	
-	
-
-	
-
-		
-	
-
-	
-	
+// For Calculating Max URL
+	/*
+	 * if(!Docs.isEmpty()) { double maxValueInMap=(Collections.max(Docs.values()));
+	 * // This will return max value in the Hashmap System.out.print("\r\n");
+	 * System.out.print("Max value: "+maxValueInMap ); for (Entry<String, Double>
+	 * entry : Docs.entrySet()) { // Iterate through hashmap if
+	 * (entry.getValue()==maxValueInMap) { System.out.println(" "+entry.getKey());
+	 * // Print the key with max value } } }
+	 */	
 	
 }
 
