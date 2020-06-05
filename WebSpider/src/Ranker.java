@@ -49,7 +49,7 @@ public class Ranker {
 	    	DatabaseConnection.DatabaseConnect();
 	    	conn= DriverManager.getConnection("jdbc:mysql://localhost/SearchEngine?serverTimezone=UTC","root","");
 	    	getTotalDocuments();
-	   
+	    	Docs =  new HashMap< String,Double>(); 
 	   // check if it is a phrase searching case or normal search
 	  //  String QueryWord =  QueryProcessor.SetOriginalQuery();
 	    if( QueryWord.startsWith("\"") & QueryWord.endsWith("\"")) { // it is a phrase searching case

@@ -29,7 +29,7 @@ public class WebInterface extends HttpServlet {
 
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		String SearchInput = request.getParameter("SearchInput");
-		System.out.print("SEARCHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH"+SearchInput+"\n");
+		System.out.print("SEARCH Input : -----------"+SearchInput+"\n");
 		double time = 0;
 		if (SearchInput != null && SearchInput != "") // if action is not null
 		{
@@ -74,6 +74,11 @@ public class WebInterface extends HttpServlet {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
+				System.out.print("-------------------Showing all results----------------------\n");
+				  for (Entry<String, Double> entry : output.entrySet())  {
+			        	System.out.println("Key final= " + entry.getKey() + 
+			                    ", Value final= " + entry.getValue()); 
+				  }
 
 				time = 0.33;
 				// do your work here
