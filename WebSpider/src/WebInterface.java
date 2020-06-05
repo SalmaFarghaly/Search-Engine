@@ -29,6 +29,7 @@ public class WebInterface extends HttpServlet {
 
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		String SearchInput = request.getParameter("SearchInput");
+		System.out.print("SEARCHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH"+SearchInput+"\n");
 		double time = 0;
 		if (SearchInput != null && SearchInput != "") // if action is not null
 		{
@@ -40,9 +41,8 @@ public class WebInterface extends HttpServlet {
         	for(int i =0;i<names.length;i++) {
         		namesLowered[i] = names[i].toLowerCase(); 
         	}
-			String action = request.getParameter("button");
-			if (action.equals("Search")) // add button clicked
-			{
+			
+
 				// ------------------------------------------- adding first part of template
 				// with style sheet -------------------------------
 				response.setContentType("text/html");
@@ -66,7 +66,10 @@ public class WebInterface extends HttpServlet {
 				// --------------------------
 				Map<String, Double> output = null;
 				try {
+					System.out.print("SEARCHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH"+SearchInput+"\n");
 					output = QueryProcessor.queryProcessor(SearchInput);
+					System.out.print("WEBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB  \n");
+					System.out.print(output);
 				} catch (IOException | SQLException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -176,7 +179,7 @@ public class WebInterface extends HttpServlet {
 				}
 				
 				System.out.println("Done");
-			}
+			
 
 			try {
 				System.out.print(SearchInput + "\n");
