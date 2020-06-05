@@ -75,7 +75,8 @@ public class WebInterface extends HttpServlet {
 				// do your work here
 				int PageList = 0;
 				for (Entry<String, Double> entry : output.entrySet()) {
-					
+					if(PageList == 10)
+						break;
 					System.out.println("Key final= " + entry.getKey() + ", Value final= " + entry.getValue());
 					// ----------------------------------------- getting url content
 					// -----------------------------
