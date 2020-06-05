@@ -454,21 +454,26 @@ public class DatabaseConnection {
 		ps= conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
 		ps.setString(1, link);
 		rs = ps.executeQuery();
-		String urls=null;
-		if(rs.next()) {
-			urls=rs.getString(1);
-			i++;
-		}
-		SQL="SELECT id FROM url WHERE link IN (?)";
-		ps= conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
-		ps.setString(1, urls);
-		rs = ps.executeQuery();
-		i=0;
+		List<String> urls=new ArrayList<String>();
 		while(rs.next()) {
-			outBoundLinks.add(rs.getInt(1));
+			urls.add(rs.getString(1));
 			i++;
 		}
-		
+		System.out.print("URLSZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ\n");
+		System.out.print(urls+"\n");
+		SQL="SELECT id FROM url WHERE link=";
+		for(int j=0;j<urls.size();j++) {
+			SQL+="?";
+			ps= conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
+			ps.setString(1, urls.get(j));
+			rs = ps.executeQuery();
+			if(rs.next()) {
+				outBoundLinks.add(rs.getInt(1));
+			}
+			SQL="SELECT id FROM url WHERE link=";
+		}
+		System.out.print("IDDDDDDDDDDDDDDDDDDDDDDD\n");
+		System.out.print(outBoundLinks+"\n");
 		return outBoundLinks;
 	}
 	//get document id given it's url

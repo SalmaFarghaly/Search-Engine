@@ -387,6 +387,7 @@ public static int getUrlsWithAllTerms (String[] query,int Docs_Contain_term) thr
 		
 		for(int i=0;i<nodeCount;i++) {
 			List<Integer>outBounds=DatabaseConnection.getOutBoundLinks(i);
+			System.out.print(i +" OUTBOUNDDDDD\n"+outBounds+"\n");
 			for(int j=0;j<outBounds.size();j++) {
 				adjList.get(i).add(outBounds.get(j));
 			}
@@ -405,15 +406,13 @@ public static int getUrlsWithAllTerms (String[] query,int Docs_Contain_term) thr
 		double [] contribution = new double[nodeCount];
 		double [] old_pageRank= new double[nodeCount];
 		double dampingFactor=0.85;
-		double offset = (1 - dampingFactor)/(float)nodeCount;
+		double offset = 1 - dampingFactor;
 		
 		//fill Contribution Array
 		for(int i=0;i<nodeCount;i++) {
 			double curOutbounds=(double)DatabaseConnection.getOutboundCount(i);
 			if(curOutbounds!=0)
 				contribution[i]=DatabaseConnection.getOutboundCount(i);
-			else
-				contribution[i]=initProbability;
 		}
 		
 		//fill pageRank Array
@@ -422,6 +421,7 @@ public static int getUrlsWithAllTerms (String[] query,int Docs_Contain_term) thr
 		}
 		
 		//loop until convergences (calculate Page Rank && didConverge)
+		System.out.print(initProbability+" probbbbbbbbbbbbbbbbbbbbbbbbbbb\n");
 		int iteration=-1;
 		do {
 			double[] newPageRankArray = new double[nodeCount]; 
@@ -430,6 +430,8 @@ public static int getUrlsWithAllTerms (String[] query,int Docs_Contain_term) thr
 				intermediateCalculation = 0;
 				for (int j = 0; j < adjList.size(); j++) {
 					if (adjList.get(j).contains(i)) {
+						if(contribution[j]==0)
+							System.out.print(j+"  ZEROOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO\n");
 						intermediateCalculation += pageRank[j] / contribution[j];
 					}
 				}
