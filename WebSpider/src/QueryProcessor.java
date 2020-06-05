@@ -67,7 +67,7 @@ public class QueryProcessor {
 		List<String> parsedQuery=ParsedQuery(input);
 		ArrayList<String> m =new ArrayList();
 		//this search query hasn't been mad before
-		if(DatabaseConnection.isSearchQueryExist(input)==false){
+		if(DatabaseConnection.isSearchQueryExist(parsedQuery)==false){
 			System.out.print("\n"+"QUERYYYYY DOESNT EXIST\n");
 					m = Ranker.ranker(input,parsedQuery);
 					DatabaseConnection.saveRankerResults(parsedQuery, m);

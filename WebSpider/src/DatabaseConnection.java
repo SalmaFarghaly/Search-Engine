@@ -537,7 +537,7 @@ public class DatabaseConnection {
 	public static void saveRankerResults(List<String>parsedQuery,ArrayList<String> m ) {
 		String q=parsedQuery.get(0);
 		for(int i=1;i<parsedQuery.size();i++)
-			q+=" "+parsedQuery.get(i);
+			q=q+" "+parsedQuery.get(i);
 		String SQL="INSERT INTO rankerresult(query,result) VALUES";
 		for(int j=0;j<m.size();j++) {
 				SQL=SQL+"(?,?)";
@@ -565,7 +565,10 @@ public class DatabaseConnection {
 		}
 		
 	}
-	public static boolean isSearchQueryExist(String q) throws SQLException {
+	public static boolean isSearchQueryExist(List<String> query) throws SQLException {
+		String q=query.get(0);
+		for(int k=1;k<query.size();k++)
+			q=q+" "+query.get(k);
 		String SQL="SELECT query FROM rankerresult WHERE query=? LIMIT 1";
 		PreparedStatement ps= conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
 		ps.setString(1, q);
@@ -584,7 +587,7 @@ public class DatabaseConnection {
 		ArrayList<String>Urls=new ArrayList();
 		String q=query.get(0);
 		for(int k=1;k<query.size();k++)
-			q+=" "+query.get(k);
+			q=q+" "+query.get(k);
 		int p=10*(pid-1);
 		String SQL ="SELECT result FROM rankerresult WHERE query=? LIMIT ?,10";
 		PreparedStatement ps= conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
@@ -597,6 +600,20 @@ public class DatabaseConnection {
 			Urls.add(rs.getString(1));
 		}
 		return Urls;
+	}
+	public static  int getQueryLengthResult(List<String> query) throws SQLException{
+		String q=query.get(0);
+		for(int k=1;k<query.size();k++)
+			q=q+" "+query.get(k);
+		String SQL ="SELECT count(*) FROM rankerresult WHERE query=? ";
+		PreparedStatement ps= conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
+		ps.setString(1, q);
+		ResultSet rs = ps.executeQuery();
+		int result = 0;
+		if(rs.next()) {
+			result = rs.getInt(1);
+		}
+		return result;
 	}
 }
 
