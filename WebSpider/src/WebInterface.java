@@ -42,9 +42,9 @@ public class WebInterface extends HttpServlet{
         {
         	String names[] = SearchInput. split(" ");
         	//time = "hi";
-            String action = request.getParameter("button");
-            if (action.equals("Search")) //add button clicked
-            {
+//            String action = request.getParameter("button");
+//            if (action.equals("Search")) //add button clicked
+//            {
             	//------------------------------------------- adding first part of template with style sheet -------------------------------
                	response.setContentType("text/html");
                PrintWriter out = response.getWriter();
@@ -90,7 +90,7 @@ public class WebInterface extends HttpServlet{
 		 			String title = null;
 		 		 try {
 		 			System.out.println("Connecting to document");
-		 			doc = Jsoup.connect(url).timeout(180000).ignoreHttpErrors(true).get();
+		 			doc = Jsoup.connect(url).timeout(0).ignoreHttpErrors(true).get();
 		 		 	title = doc.title();
 		 			words1 = doc.select("p");
 		 		} catch (IOException e) {
@@ -154,7 +154,7 @@ public class WebInterface extends HttpServlet{
             	  RequestDispatcher rd2 = request.getRequestDispatcher("/WEB-INF/part2.html");
           		rd2.include(request, response);
           		 System.out.println("Done");
-            	  }
+//            	  }
             
             try {
             	System.out.print(SearchInput+"\n");

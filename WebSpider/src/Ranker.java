@@ -357,6 +357,7 @@ public class Ranker {
 		
 		for(int i=0;i<nodeCount;i++) {
 			List<Integer>outBounds=DatabaseConnection.getOutBoundLinks(i);
+			System.out.print(i +" OUTBOUNDDDDD\n"+outBounds+"\n");
 			for(int j=0;j<outBounds.size();j++) {
 				adjList.get(i).add(outBounds.get(j));
 			}
@@ -375,15 +376,15 @@ public class Ranker {
 		double [] contribution = new double[nodeCount];
 		double [] old_pageRank= new double[nodeCount];
 		double dampingFactor=0.85;
-		double offset = (1 - dampingFactor)/(float)nodeCount;
+		double offset = 1 - dampingFactor;
 		
 		//fill Contribution Array
 		for(int i=0;i<nodeCount;i++) {
 			double curOutbounds=(double)DatabaseConnection.getOutboundCount(i);
 			if(curOutbounds!=0)
 				contribution[i]=DatabaseConnection.getOutboundCount(i);
-			else
-				contribution[i]=initProbability;
+//			else
+//				contribution[i]=initProbability;
 		}
 		
 		//fill pageRank Array
@@ -392,14 +393,17 @@ public class Ranker {
 		}
 		
 		//loop until convergences (calculate Page Rank && didConverge)
+		System.out.print(initProbability+" probbbbbbbbbbbbbbbbbbbbbbbbbbb\n");
 		int iteration=-1;
-		do {
+//		do {
 			double[] newPageRankArray = new double[nodeCount]; 
 			double intermediateCalculation;
 			for (int i = 0; i < pageRank.length; i++) {
 				intermediateCalculation = 0;
 				for (int j = 0; j < adjList.size(); j++) {
 					if (adjList.get(j).contains(i)) {
+						if(contribution[j]==0)
+							System.out.print(j+"  ZEROOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO\n");
 						intermediateCalculation += pageRank[j] / contribution[j];
 					}
 				}
@@ -409,7 +413,7 @@ public class Ranker {
 			old_pageRank = pageRank;
 			pageRank = newPageRankArray;
 			iteration++;
-		}while(!didConverge(iteration,pageRank,old_pageRank));
+//		}while(!didConverge(iteration,pageRank,old_pageRank));
 //		for(int i=0;i<nodeCount;i++)
 //			System.out.print(pageRank[i]+"\n");
 		

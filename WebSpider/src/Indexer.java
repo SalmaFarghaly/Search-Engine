@@ -56,30 +56,30 @@ public class Indexer {
     public static void main(String[] args) throws IOException, SQLException, InterruptedException {
     	//Connect to DataBase
     	DatabaseConnection.DatabaseConnect();
-
-    	System.out.println("Enter You want to re-index or index: (1) index (2) re-index");
-    	 BufferedReader consoleReader =  new BufferedReader(new InputStreamReader(System.in)); 
-        // Reading data using readLine 
-
-    	 String type = consoleReader.readLine(); 
-        
-        //check if he wants to re-index the content or not
-        if(Integer.parseInt(type)==2) {
-        	//drop all the table
-        	
-        	DatabaseConnection.dropIndexingTable();
-        	//reset start indexing of all urls 
-        	DatabaseConnection.resetDoneAndStartIndexing();
-        	
-        }
-        else{
-        	DatabaseConnection.deleteNonDoneIndexingWords();
-        }
-        consoleReader.close();
-        Parser.loadStopwords();
-    	Indexer indexer=new Indexer();
+//
+//    	System.out.println("Enter You want to re-index or index: (1) index (2) re-index");
+//    	 BufferedReader consoleReader =  new BufferedReader(new InputStreamReader(System.in)); 
+//        // Reading data using readLine 
+//
+//    	 String type = consoleReader.readLine(); 
+//        
+//        //check if he wants to re-index the content or not
+//        if(Integer.parseInt(type)==2) {
+//        	//drop all the table
+//        	
+//        	DatabaseConnection.dropIndexingTable();
+//        	//reset start indexing of all urls 
+//        	DatabaseConnection.resetDoneAndStartIndexing();
+//        	
+//        }
+//        else{
+//        	DatabaseConnection.deleteNonDoneIndexingWords();
+//        }
+//        consoleReader.close();
+//        Parser.loadStopwords();
+//    	Indexer indexer=new Indexer();
     	
-    //	Ranker.calculatePageRank();
+    	Ranker.calculatePageRank();
     	
     }
     private static class Index extends Thread{
