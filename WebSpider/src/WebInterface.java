@@ -147,7 +147,11 @@ public class WebInterface extends HttpServlet {
 								+ title + "</a></h2>\n" + "            <h3>" + url + "</h3> \n" + "            <p>"
 								+ "" + "</p>\n" + "        </div>\n");
 					}
-					if(PageList == 10 ) {
+					PageList++;
+					}
+					
+				
+					
 						System.out.println("Done Adding document to html file");
 						out.println("<body>     \n" + 
 								"		<br>\n" + 
@@ -172,10 +176,6 @@ public class WebInterface extends HttpServlet {
 						RequestDispatcher rd2 = request.getRequestDispatcher("/WEB-INF/part2.html");
 						rd2.include(request, response);
 						out.flush();
-					}
-					
-				
-					PageList++;
 				}
 				
 				System.out.println("Done");
@@ -191,7 +191,7 @@ public class WebInterface extends HttpServlet {
 
 		}
 
-	}
+	
 
 	public static void getSnippets(String url) {
 
