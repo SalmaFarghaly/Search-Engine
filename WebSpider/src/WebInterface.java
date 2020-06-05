@@ -155,16 +155,16 @@ public class WebInterface extends HttpServlet {
 								"		\n" + 
 								"        <div class=\"pagebar\">\n" + 
 								"            <ul class=\"pagelist\">\n" + 
-								"                <li class=\"pagelistfirst\"><a href=\"ViewServlet?page=1\">1</a></li>\n" + 
-								"                <li class=\"pagelistnumber\"><a href=\"ViewServlet?page=2\">2</a></li>\n" + 
-								"                <li class=\"pagelistnumber\"><a href=\"ViewServlet?page=3\">3</a></li>\n" + 
-								"                <li class=\"pagelistnumber\"><a href=\"ViewServlet?page=4\">4</a></li>\n" + 
-								"                <li class=\"pagelistnumber\"><a href=\"ViewServlet?page=5\">5</a></li>\n" + 
-								"                <li class=\"pagelistnumber\"><a href=\"ViewServlet?page=6\">6</a></li>\n" + 
-								"                <li class=\"pagelistnumber\"><a href=\"ViewServlet?page=7\">7</a></li>\n" + 
-								"                <li class=\"pagelistnumber\"><a href=\"ViewServlet?page=8\">8</a></li>\n" + 
-								"                <li class=\"pagelistnumber\"><a href=\"ViewServlet?page=9\">9</a></li>\n" + 
-								"                <li class=\"pagelistnumber\"><a href=\"ViewServlet?page=10\">10</a></li>\n" + 
+								"                <li class=\"pagelistfirst\"><a href=\"ViewServlet?page=1&SearchInput="+SearchInput+"\">1</a></li>\n" + 
+								"                <li class=\"pagelistnumber\"><a href=\"ViewServlet?page=2&SearchInput="+SearchInput+"\">2</a></li>\n" + 
+								"                <li class=\"pagelistnumber\"><a href=\"ViewServlet?page=3&SearchInput="+SearchInput+"\">3</a></li>\n" + 
+								"                <li class=\"pagelistnumber\"><a href=\"ViewServlet?page=4&SearchInput="+SearchInput+"\">4</a></li>\n" + 
+								"                <li class=\"pagelistnumber\"><a href=\"ViewServlet?page=5&SearchInput="+SearchInput+"\">5</a></li>\n" + 
+								"                <li class=\"pagelistnumber\"><a href=\"ViewServlet?page=6&SearchInput="+SearchInput+"\">6</a></li>\n" + 
+								"                <li class=\"pagelistnumber\"><a href=\"ViewServlet?page=7&SearchInput="+SearchInput+"\">7</a></li>\n" + 
+								"                <li class=\"pagelistnumber\"><a href=\"ViewServlet?page=8&SearchInput="+SearchInput+"\">8</a></li>\n" + 
+								"                <li class=\"pagelistnumber\"><a href=\"ViewServlet?page=9&SearchInput="+SearchInput+"\">9</a></li>\n" + 
+								"                <li class=\"pagelistnumber\"><a href=\"ViewServlet?page=10&SearchInput="+SearchInput+"\">10</a></li>\n" + 
 								"              \n" + 
 								"            </ul>\n" + 
 								"        </div>\n" + 

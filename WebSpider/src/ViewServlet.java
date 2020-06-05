@@ -12,13 +12,14 @@ public class ViewServlet extends HttpServlet {
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException   
 	          {  
+		String SearchInput = request.getParameter("SearchInput");
 	        response.setContentType("text/html");  
 	        PrintWriter out=response.getWriter();  
 	          
 	        String spageid=request.getParameter("page");  
 	        int pageid=Integer.parseInt(spageid);  
 	        int total=5;  
-	          out.print("<h1>Page No: "+pageid+"</h1>");  
+	          out.print("<h1>Page No: "+pageid+"& Search Input"+SearchInput+"</h1>");  
 	        out.print("<table border='1' cellpadding='4' width='60%'>");  
 	        out.print("<tr><th>Id</th><th>Name</th><th>Salary</th>");  
 	       
