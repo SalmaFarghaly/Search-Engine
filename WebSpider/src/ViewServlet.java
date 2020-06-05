@@ -1,34 +1,61 @@
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Stream;
 
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
+
 @WebServlet("/ViewServlet")  
 public class ViewServlet extends HttpServlet {  
 	
 	
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException   
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException   
 	          {  
 		String SearchInput = request.getParameter("SearchInput");
-	        response.setContentType("text/html");  
-	        PrintWriter out=response.getWriter();  
-	          
+	       
 	        String spageid=request.getParameter("page");  
 	        int pageid=Integer.parseInt(spageid);  
-	        int total=5;  
-	          out.print("<h1>Page No: "+pageid+"& Search Input"+SearchInput+"</h1>");  
-	        out.print("<table border='1' cellpadding='4' width='60%'>");  
-	        out.print("<tr><th>Id</th><th>Name</th><th>Salary</th>");  
-	       
-	          
-	        out.print("<a href='ViewServlet?page=1'>1</a> ");  
-	        out.print("<a href='ViewServlet?page=2'>2</a> ");  
-	        out.print("<a href='ViewServlet?page=3'>3</a> ");  
-	          
-	        out.close();  
-	    }  
-	
+
+
+        	// ------------------------------------------- adding first part of template
+			// with style sheet -------------------------------
+			response.setContentType("text/html");
+			PrintWriter out = response.getWriter();
+			WebInterface.AddingFirstHTMLPart(out,SearchInput);
+			RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/part1.html");
+			rd.include(request, response);
+	    
+			//result of query search 
+	        ArrayList<String> output=new ArrayList<String>();
+	        int PagesNum = 0;
+	        try {
+				output=QueryProcessor.queryProcessor(SearchInput, pageid);
+				List<String> parsedQuery = QueryProcessor.ParsedQuery(SearchInput);
+				PagesNum = DatabaseConnection.getQueryLengthResult(parsedQuery);
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} 
+	        WebInterface.AddingResults( out, output, SearchInput);			
+	        PagesNum = (int) Math.ceil((float) PagesNum/10);
+			PagesNum++;	
+			System.out.println("Done Adding document to html file");
+			WebInterface.AddingPagebar( out, PagesNum, SearchInput);
+			
+			RequestDispatcher rd2 = request.getRequestDispatcher("/WEB-INF/part2.html");
+			rd2.include(request, response);
+			out.flush();
+			out.close();
+			}
 }

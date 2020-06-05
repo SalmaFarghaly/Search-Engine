@@ -6,13 +6,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-//=================This class contains all the daatbase queries=======================//
+//=================This class contains all the database queries used in all modules=======================//
 public class DatabaseConnection {
 	
 	
@@ -459,8 +460,6 @@ public class DatabaseConnection {
 			urls.add(rs.getString(1));
 			i++;
 		}
-		System.out.print("URLSZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ\n");
-		System.out.print(urls+"\n");
 		SQL="SELECT id FROM url WHERE link=";
 		for(int j=0;j<urls.size();j++) {
 			SQL+="?";
@@ -472,8 +471,6 @@ public class DatabaseConnection {
 			}
 			SQL="SELECT id FROM url WHERE link=";
 		}
-		System.out.print("IDDDDDDDDDDDDDDDDDDDDDDD\n");
-		System.out.print(outBoundLinks+"\n");
 		return outBoundLinks;
 	}
 	//get document id given it's url
@@ -536,6 +533,87 @@ public class DatabaseConnection {
 			
 		}
 		
+	}
+	public static void saveRankerResults(List<String>parsedQuery,ArrayList<String> m ) {
+		String q=parsedQuery.get(0);
+		for(int i=1;i<parsedQuery.size();i++)
+			q=q+" "+parsedQuery.get(i);
+		String SQL="INSERT INTO rankerresult(query,result) VALUES";
+		for(int j=0;j<m.size();j++) {
+				SQL=SQL+"(?,?)";
+				if(j!=m.size()-1)
+					SQL=SQL+",";
+		}
+		try {
+			int c=2*m.size();
+			System.out.print("ccccc\n"+c+"\n");
+			PreparedStatement ps= conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
+			int k=0;
+			for(int i=1;i<=c;i++) {
+				if(i%2==1)
+					ps.setString(i, q);
+				else {
+					ps.setString(i,m.get(k));
+					k++;
+				}
+					
+			}
+			ps.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	public static boolean isSearchQueryExist(List<String> query) throws SQLException {
+		String q=query.get(0);
+		for(int k=1;k<query.size();k++)
+			q=q+" "+query.get(k);
+		String SQL="SELECT query FROM rankerresult WHERE query=? LIMIT 1";
+		PreparedStatement ps= conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
+		ps.setString(1, q);
+		ResultSet rs = ps.executeQuery();
+		String d="";
+		if(rs.next()) {
+			d=rs.getString(1);
+		}
+		if(d.isEmpty())
+			return false;
+		else
+			return true;
+		
+	}
+	public static  ArrayList<String> getQueryResult(List<String> query,int pid) throws SQLException{
+		ArrayList<String>Urls=new ArrayList();
+		String q=query.get(0);
+		for(int k=1;k<query.size();k++)
+			q=q+" "+query.get(k);
+		int p=10*(pid-1);
+		String SQL ="SELECT result FROM rankerresult WHERE query=? LIMIT ?,10";
+		PreparedStatement ps= conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
+		ps.setString(1, q);
+		ps.setInt(2, p);
+		ResultSet rs = ps.executeQuery();
+		String d="";
+		int k=0;
+		while(rs.next()) {
+			Urls.add(rs.getString(1));
+		}
+		return Urls;
+	}
+	public static  int getQueryLengthResult(List<String> query) throws SQLException{
+		String q=query.get(0);
+		for(int k=1;k<query.size();k++)
+			q=q+" "+query.get(k);
+		String SQL ="SELECT count(*) FROM rankerresult WHERE query=? ";
+		PreparedStatement ps= conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
+		ps.setString(1, q);
+		ResultSet rs = ps.executeQuery();
+		int result = 0;
+		if(rs.next()) {
+			result = rs.getInt(1);
+		}
+		return result;
 	}
 }
 
