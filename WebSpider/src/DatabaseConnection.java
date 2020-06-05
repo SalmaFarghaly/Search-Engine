@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -459,8 +460,6 @@ public class DatabaseConnection {
 			urls.add(rs.getString(1));
 			i++;
 		}
-		System.out.print("URLSZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ\n");
-		System.out.print(urls+"\n");
 		SQL="SELECT id FROM url WHERE link=";
 		for(int j=0;j<urls.size();j++) {
 			SQL+="?";
@@ -472,8 +471,6 @@ public class DatabaseConnection {
 			}
 			SQL="SELECT id FROM url WHERE link=";
 		}
-		System.out.print("IDDDDDDDDDDDDDDDDDDDDDDD\n");
-		System.out.print(outBoundLinks+"\n");
 		return outBoundLinks;
 	}
 	//get document id given it's url
@@ -534,6 +531,35 @@ public class DatabaseConnection {
 			ps.executeUpdate();
 			
 			
+		}
+		
+	}
+	public static void saveRankerResults(List<String>parsedQuery,Map<String, Double> m ) {
+		String q=parsedQuery.get(0);
+		for(int i=1;i<parsedQuery.size();i++)
+			q=" "+parsedQuery.get(i);
+		String SQL="INSERT INTO rankerresult(query,result) VALUES";
+		for(int j=0;j<m.size();j++) {
+				SQL=SQL+"(?,?)";
+				if(j!=m.size()-1)
+					SQL=SQL+",";
+		}
+		try {
+			int c=2*m.size();
+			List Entries=new ArrayList(m.keySet());
+			PreparedStatement ps= conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
+			int k=0;
+			for(int i=1;i<=c;i++) {
+				if(i%2==1)
+					ps.setString(i, q);
+				else 
+					ps.setString(i,(String)Entries.get(k));
+					k++;
+					
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
 	}

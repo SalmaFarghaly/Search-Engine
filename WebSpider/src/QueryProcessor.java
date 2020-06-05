@@ -64,6 +64,8 @@ public class QueryProcessor {
 	public static Map<String, Double> queryProcessor(String input) throws IOException, SQLException {
 		List<String> parsedQuery=ParsedQuery(input);
 		Map<String, Double> m = Ranker.ranker(input,parsedQuery);
+		//save  result of ranker to the db
+		DatabaseConnection.saveRankerResults(parsedQuery, m);
 		return m;
 	}
 	
