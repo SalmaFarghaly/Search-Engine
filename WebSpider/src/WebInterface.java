@@ -29,7 +29,6 @@ public class WebInterface extends HttpServlet {
 
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		String SearchInput = request.getParameter("SearchInput");
-		System.out.print("SEARCHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH"+SearchInput+"\n");
 		double time = 0;
 		if (SearchInput != null && SearchInput != "") // if action is not null
 		{
@@ -64,11 +63,11 @@ public class WebInterface extends HttpServlet {
 
 				// ------------------------------ Getting Search Results
 				// --------------------------
-				Map<String, Double> output = null;
+				ArrayList<String> output = new ArrayList();
 				try {
 					System.out.print("SEARCHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH"+SearchInput+"\n");
-					output = QueryProcessor.queryProcessor(SearchInput);
-					System.out.print("WEBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB  \n");
+					output = QueryProcessor.queryProcessor(SearchInput,1);
+//					System.out.print("WEBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB  \n");
 					System.out.print(output);
 				} catch (IOException | SQLException e1) {
 					// TODO Auto-generated catch block
@@ -78,13 +77,13 @@ public class WebInterface extends HttpServlet {
 				time = 0.33;
 				// do your work here
 				int PageList = 0;
-				for (Entry<String, Double> entry : output.entrySet()) {
+				for (int p=0;p<output.size();p++){
 					if(PageList == 10)
 						break;
-					System.out.println("Key final= " + entry.getKey() + ", Value final= " + entry.getValue());
+//					System.out.println("Key final= " + entry.getKey() + ", Value final= " + entry.getValue());
 					// ----------------------------------------- getting url content
 					// -----------------------------
-					String url = entry.getKey();
+					String url = output.get(p);
 					Document doc;
 					Elements words1 = null;
 					String title = null;

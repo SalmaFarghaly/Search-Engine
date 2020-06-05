@@ -49,23 +49,32 @@ public class QueryProcessor {
 		System.out.print("parsed "+parsedQuery);
 		String names[] = s. split(" ");
 		long start = System.currentTimeMillis();
-		Map<String, Double> output = Ranker.ranker(s,parsedQuery);
+		ArrayList<String> output = Ranker.ranker(s,parsedQuery);
+		DatabaseConnection.saveRankerResults(parsedQuery, output);
 		System.out.print("-------------------Showing all results----------------------\n");
-		  for (Entry<String, Double> entry : output.entrySet())  {
-	        	System.out.println("Key final= " + entry.getKey() + 
-	                    ", Value final= " + entry.getValue()); 
-		  }
+//		  for (Entry<String, Double> entry : output.entrySet())  {
+//	        	System.out.println("Key final= " + entry.getKey() + 
+//	                    ", Value final= " + entry.getValue()); 
+//		  }
 		  long end = System.currentTimeMillis();
 	      //finding the time difference and converting it into seconds
 	      float sec = (end - start) / 1000F; System.out.println("Time of Ranker: "+ sec + " seconds");
 
 		
 	}
-	public static Map<String, Double> queryProcessor(String input) throws IOException, SQLException {
+	public static ArrayList<String> queryProcessor(String input,int pid) throws IOException, SQLException {
+		DatabaseConnection.DatabaseConnect();
 		List<String> parsedQuery=ParsedQuery(input);
-		Map<String, Double> m = Ranker.ranker(input,parsedQuery);
+		ArrayList<String> m =new ArrayList();
+		//this search query hasn't been mad before
+		if(DatabaseConnection.isSearchQueryExist(input)==false){
+			System.out.print("\n"+"QUERYYYYY DOESNT EXIST\n");
+					m = Ranker.ranker(input,parsedQuery);
+					DatabaseConnection.saveRankerResults(parsedQuery, m);
+		}
+		else
+				m=DatabaseConnection.getQueryResult(parsedQuery, 1);
 		//save  result of ranker to the db
-		DatabaseConnection.saveRankerResults(parsedQuery, m);
 		return m;
 	}
 	

@@ -44,7 +44,7 @@ public class Ranker {
 			h6= new ArrayList<Integer>(),p= new ArrayList<Integer>();
 
 	// public static void main(String[] args) throws IOException, SQLException {
-	public static Map<String, Double> ranker (String QueryWord,List<String> ParsedQuery) throws SQLException, IOException	{
+	public static ArrayList<String> ranker (String QueryWord,List<String> ParsedQuery) throws SQLException, IOException	{
 	//Connect to DataBase
 	    	DatabaseConnection.DatabaseConnect();
 	    	conn= DriverManager.getConnection("jdbc:mysql://localhost/SearchEngine?serverTimezone=UTC","root","");
@@ -69,7 +69,12 @@ public class Ranker {
 	    	       .limit(200)
 	    	       .collect(Collectors.toMap(
 	    	          Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
-	 return topTen;
+	    	ArrayList<String> urls=new ArrayList();
+		  for (Entry<String, Double> entry : topTen.entrySet())  {
+			  urls.add(entry.getKey());
+		  }
+		  return urls;
+	// return topTen;
 		// calculatePageRank();
 	 }
 

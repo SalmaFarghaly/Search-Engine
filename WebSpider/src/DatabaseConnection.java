@@ -13,7 +13,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-//=================This class contains all the daatbase queries=======================//
+//=================This class contains all the database queries used in all modules=======================//
 public class DatabaseConnection {
 	
 	
@@ -534,7 +534,7 @@ public class DatabaseConnection {
 		}
 		
 	}
-	public static void saveRankerResults(List<String>parsedQuery,Map<String, Double> m ) {
+	public static void saveRankerResults(List<String>parsedQuery,ArrayList<String> m ) {
 		String q=parsedQuery.get(0);
 		for(int i=1;i<parsedQuery.size();i++)
 			q=" "+parsedQuery.get(i);
@@ -546,22 +546,57 @@ public class DatabaseConnection {
 		}
 		try {
 			int c=2*m.size();
-			List Entries=new ArrayList(m.keySet());
+			System.out.print("ccccc\n"+c+"\n");
 			PreparedStatement ps= conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
 			int k=0;
 			for(int i=1;i<=c;i++) {
 				if(i%2==1)
 					ps.setString(i, q);
-				else 
-					ps.setString(i,(String)Entries.get(k));
+				else {
+					ps.setString(i,m.get(k));
 					k++;
+				}
 					
 			}
+			ps.executeUpdate();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
+	}
+	public static boolean isSearchQueryExist(String q) throws SQLException {
+		String SQL="SELECT query FROM rankerresult WHERE query=? LIMIT 1";
+		PreparedStatement ps= conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
+		ps.setString(1, q);
+		ResultSet rs = ps.executeQuery();
+		String d="";
+		if(rs.next()) {
+			d=rs.getString(1);
+		}
+		if(d.isEmpty())
+			return false;
+		else
+			return true;
+		
+	}
+	public static  ArrayList<String> getQueryResult(List<String> query,int pid) throws SQLException{
+		ArrayList<String>Urls=new ArrayList();
+		String q=query.get(0);
+		for(int k=1;k<query.size();k++)
+			q=" "+query.get(k);
+		int p=10*(pid-1);
+		String SQL ="SELECT result FROM rankerresult WHERE query=? LIMIT ?,10";
+		PreparedStatement ps= conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
+		ps.setString(1, q);
+		ps.setInt(2, p);
+		ResultSet rs = ps.executeQuery();
+		String d="";
+		int k=0;
+		while(rs.next()) {
+			Urls.add(rs.getString(1));
+		}
+		return Urls;
 	}
 }
 

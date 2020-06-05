@@ -1,5 +1,7 @@
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
+import java.util.ArrayList;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -18,6 +20,14 @@ public class ViewServlet extends HttpServlet {
 	          
 	        String spageid=request.getParameter("page");  
 	        int pageid=Integer.parseInt(spageid);  
+	        //result of query search 
+	        ArrayList<String> result=new ArrayList();
+	        try {
+				result=QueryProcessor.queryProcessor(SearchInput, pageid);
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} 
 	        int total=5;  
 	          out.print("<h1>Page No: "+pageid+"& Search Input"+SearchInput+"</h1>");  
 	        out.print("<table border='1' cellpadding='4' width='60%'>");  
