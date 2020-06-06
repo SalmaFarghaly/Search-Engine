@@ -31,11 +31,12 @@ public class WebInterface extends HttpServlet {
 		String SearchInput = request.getParameter("SearchInput");
 		System.out.print("SEARCH Input : -----------"+SearchInput+"\n");
 		double time = 0;
+		long start = 0;
 		if (SearchInput != null && SearchInput != "") // if action is not null
 		{
 			int PagesNum = 0;
 		
-			
+			 start = System.currentTimeMillis();
 
 				// ------------------------------------------- adding first part of template
 				// with style sheet -------------------------------
@@ -70,6 +71,7 @@ public class WebInterface extends HttpServlet {
 						rd2.include(request, response);
 						out.flush();
 						out.close();
+						
 				}
 				
 				System.out.println("Done");
@@ -82,6 +84,10 @@ public class WebInterface extends HttpServlet {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			 long end = System.currentTimeMillis();
+		      //finding the time difference and converting it into seconds
+		      float sec = (end - start) / 1000F; System.out.println("Time of WebInterface: "+ sec + " seconds");
+
 
 		}
 

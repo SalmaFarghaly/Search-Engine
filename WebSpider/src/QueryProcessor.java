@@ -50,7 +50,7 @@ public class QueryProcessor {
 		String names[] = s. split(" ");
 		long start = System.currentTimeMillis();
 		ArrayList<String> output = Ranker.ranker(s,parsedQuery);
-		DatabaseConnection.saveRankerResults(parsedQuery, output);
+		//DatabaseConnection.saveRankerResults(parsedQuery, output);
 		System.out.print("-------------------Showing all results----------------------\n");
 //		  for (Entry<String, Double> entry : output.entrySet())  {
 //	        	System.out.println("Key final= " + entry.getKey() + 
@@ -73,7 +73,7 @@ public class QueryProcessor {
 					DatabaseConnection.saveRankerResults(parsedQuery, m);
 		}
 		else
-				m=DatabaseConnection.getQueryResult(parsedQuery, 1);
+				m=DatabaseConnection.getQueryResult(parsedQuery, pid);
 		//save  result of ranker to the db
 		return m;
 	}

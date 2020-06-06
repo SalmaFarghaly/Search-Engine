@@ -23,7 +23,7 @@ public class ViewServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException   
 	          {  
 		String SearchInput = request.getParameter("SearchInput");
-	       
+		long start = 0;
 	        String spageid=request.getParameter("page");  
 	        int pageid=Integer.parseInt(spageid);  
 
@@ -57,5 +57,8 @@ public class ViewServlet extends HttpServlet {
 			rd2.include(request, response);
 			out.flush();
 			out.close();
+			 long end = System.currentTimeMillis();
+		      //finding the time difference and converting it into seconds
+		      float sec = (end - start) / 1000F; System.out.println("Time of WebInterface: "+ sec + " seconds");
 			}
 }
