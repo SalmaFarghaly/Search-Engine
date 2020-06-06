@@ -95,6 +95,10 @@ public class WebInterface extends HttpServlet {
 
 	public static void AddingFirstHTMLPart(PrintWriter out,String SearchInput) {
 		// to edit the title
+	    if( SearchInput.startsWith("\"") & SearchInput.endsWith("\"")) {
+	    	  SearchInput =SearchInput.replaceAll("^\"+|\"+$", "");
+	    	 //SearchInput = "\""+QueryWithoutQuotes+"\"";
+	    }
 		out.println("<!doctype html>\n" + "<html>\n" + "\n" + "<head>\n" + "    <title>" + SearchInput
 				+ " - Bing Search</title>\n"
 				+ "    <link rel=\"shortcut icon\" type=\"image/ico\" href=\"images/favicon.ico\" />\n"
@@ -107,6 +111,10 @@ public class WebInterface extends HttpServlet {
 
 	}
 	public static void AddingPagebar(PrintWriter out,int PagesNum,String SearchInput) {
+		  if( SearchInput.startsWith("\"") & SearchInput.endsWith("\"")) {
+	    	  SearchInput =SearchInput.replaceAll("^\"+|\"+$", "");
+	    	 //SearchInput = "\""+QueryWithoutQuotes+"\"";
+	    }
 		System.out.println("Done Adding document to html file");
 		out.println("<body>     \n" + 
 				"		<br>\n" + 
@@ -128,6 +136,10 @@ public class WebInterface extends HttpServlet {
 	
 	public static void AddingResults(PrintWriter out,List<String> output,String SearchInput) {
 		int PageList = 0;
+		   if( SearchInput.startsWith("\"") & SearchInput.endsWith("\"")) {
+		    	  SearchInput =SearchInput.replaceAll("^\"+|\"+$", "");
+		    	 //SearchInput = "\""+QueryWithoutQuotes+"\"";
+		    }
 		String names[] = SearchInput.split(" ");
 		String CapitalizedInput[] = new String[names.length];
 		for(int i=0;i<names.length; i++)

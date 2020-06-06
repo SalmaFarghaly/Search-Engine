@@ -546,6 +546,7 @@ public class DatabaseConnection {
 		}
 		try {
 			int c=2*m.size();
+			if(c==0) return;
 			System.out.print("ccccc\n"+c+"\n");
 			PreparedStatement ps= conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
 			int k=0;
