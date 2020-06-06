@@ -27,8 +27,9 @@ public class Parser {
 	private static List<File> webPageFilesList = new ArrayList<File>();
 
 	public static void loadStopwords() throws IOException {
-		
-	    stopWords = Files.readAllLines(Paths.get("C:\\Users\\Lenovo\\git\\Search-Engine\\WebSpider\\english_stopwords.txt"));
+		String currentDirectory = System.getProperty("user.dir");
+	    System.out.println("The current working directory is " + currentDirectory);
+	    stopWords = Files.readAllLines(Paths.get(currentDirectory+"\\english_stopwords.txt"));
 	    System.out.print("stopWords\n"+stopWords+"\n");
 	}
 

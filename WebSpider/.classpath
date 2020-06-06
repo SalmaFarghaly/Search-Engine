@@ -6,8 +6,8 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="D:/Senior-1 2nd sem/Advanced programming tech/Project APT/project apt material/jsoup-1.13.1.jar"/>
-	<classpathentry kind="lib" path="D:/Senior-1 2nd sem/Advanced programming tech/Project APT/project apt material/mysql-connector-java-8.0.19/mysql-connector-java-8.0.19.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Lenovo/Downloads/apache-tomcat-9.0.34/lib/servlet-api.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Dell/Desktop/Apt project/jarFiles/mysql-connector-java-8.0.19.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Dell/Desktop/Apt project/jarFiles/jsoup-1.13.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Dell/Desktop/Apt/apache-tomcat-9.0.34/lib/servlet-api.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

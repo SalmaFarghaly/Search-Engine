@@ -26,7 +26,7 @@ public class ViewServlet extends HttpServlet {
 	       
 	        String spageid=request.getParameter("page");  
 	        int pageid=Integer.parseInt(spageid);  
-
+	        System.out.print("\n"+"PAGEEEEEEEEEEEEEEID"+pageid+"\n");
 
         	// ------------------------------------------- adding first part of template
 			// with style sheet -------------------------------
@@ -41,6 +41,7 @@ public class ViewServlet extends HttpServlet {
 	        int PagesNum = 0;
 	        try {
 				output=QueryProcessor.queryProcessor(SearchInput, pageid);
+				System.out.print("\nOutput"+output+"\n");
 				List<String> parsedQuery = QueryProcessor.ParsedQuery(SearchInput);
 				PagesNum = DatabaseConnection.getQueryLengthResult(parsedQuery);
 			} catch (SQLException e1) {

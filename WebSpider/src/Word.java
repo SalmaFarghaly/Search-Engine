@@ -1,4 +1,5 @@
-
+// this class is used to save each word after stemming and it's number of occurence in each tag in an object called (Word)
+// then we save this word later in the database
 public class Word {
 	int h1=0;
 	int h2=0;

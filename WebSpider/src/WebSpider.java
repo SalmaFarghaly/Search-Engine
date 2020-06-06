@@ -23,7 +23,6 @@ import java.io.FileReader;
 
 public class WebSpider{
 
-//    private final Set<URL> links;
     private final long startTime;
     
     //lock
@@ -40,7 +39,6 @@ public class WebSpider{
         count=list.size();
         //check that it was first time to run crawler
         if(type==1&&DatabaseConnection.isThreadStateEmpty()==true) {
-        	System.out.print("GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG\n");
 	       for(URL url :list){
 	    	   DatabaseConnection.saveInitials(url.toString());
 	       }
@@ -123,7 +121,6 @@ public class WebSpider{
 			
 				
 		          final Elements linksOnPage = document.select("a[href]");
-		          System.out.print("HYPERRRRRRRRRRRRRRRRRRRRRRCOUNTTTTTTTTTTTTTTTTTTTTTT"+linksOnPage.size()+"\n");
 	              String [] parts=null;
 		          for (final Element page : linksOnPage) {
 		        	   	synchronized(this.dummy) 
@@ -153,7 +150,6 @@ public class WebSpider{
 		            	  continue;
 		            	  //check if it is allowed to enter link
 		              if(robotSafe(new URL(parts[0]))==false ) {
-		            	  System.out.print("DISALLLLOWWWWEDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD\n");
 		            	  continue;}
 
 		        	
@@ -196,7 +192,6 @@ public class WebSpider{
 	          
 	        
     	}
-    	System.out.print(this.threadNo+"  FINISHEDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD\n");
           
     		
     	}
@@ -207,10 +202,8 @@ public class WebSpider{
     {
         String strHost = url.getHost();
         
-//        System.out.print("strHostttt"+ strHost+"\n");
         String strRobot = "https://" + strHost + "/robots.txt";
         URL urlRobot;
-//        System.out.print("strRobottttttttt"+ strRobot+"\n");
         try { urlRobot = new URL(strRobot);
         } catch (MalformedURLException e) {
             // something weird is happening, so don't trust it
@@ -302,23 +295,20 @@ public class WebSpider{
         //if ThreadState is saved and he want to crawl "1" that means interrupt has occurred
     	if(DatabaseConnection.isThreadStateEmpty()==true||Integer.parseInt(type)==2) {
 	    	try {
-				reader = new BufferedReader(new FileReader("C:\\Users\\Dell\\Desktop\\Apt project\\seedlist trial.txt"));
+	    		String currentDirectory = System.getProperty("user.dir");
+				reader = new BufferedReader(new FileReader(currentDirectory+"\\seedlist.txt"));
 				String line = reader.readLine();
 				while (line != null) {
-					System.out.println(line);
 					list.add(new URL(line));
 					line = reader.readLine();
 				}
 				reader.close();
-				System.out.print(list+"\n");
 			}
 	    	catch (IOException e) {
-	    		System.out.print("ERROR"+e+"\n");
 				e.printStackTrace();
 			}
     	}
     
-    	final WebSpider crawler = new WebSpider(list,Integer.parseInt(type));
     	
     }
 

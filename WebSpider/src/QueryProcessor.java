@@ -73,7 +73,7 @@ public class QueryProcessor {
 					DatabaseConnection.saveRankerResults(parsedQuery, m);
 		}
 		else
-				m=DatabaseConnection.getQueryResult(parsedQuery, 1);
+				m=DatabaseConnection.getQueryResult(parsedQuery, pid);
 		//save  result of ranker to the db
 		return m;
 	}

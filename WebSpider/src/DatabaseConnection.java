@@ -197,7 +197,7 @@ public class DatabaseConnection {
 	}
 	
 	static public void addWords(ArrayList<Word> tokens,String url,Integer count) throws SQLException {
-	String SQL="INSERT INTO indexing (link,word,h1,h2,h3,h4,h5,h6,p,title,italic,bold) VALUES ";//(?,?,?,?,?,?,?,?,?,?,?,?)";
+	String SQL="INSERT INTO indexing (link,word,h1,h2,h3,h4,h5,h6,p,title,italic,bold) VALUES ";
 	for(int i=0;i<tokens.size();i++) {
 		SQL=SQL+"(?,?,?,?,?,?,?,?,?,?,?,?)";
 		if(i!=tokens.size()-1)
@@ -351,10 +351,6 @@ public class DatabaseConnection {
 		}
 		if(urls==null)
 			return;
-		SQL="DELETE FROM indexing WHERE link IN (?)";
-		ps= conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
-		ps.setString(1, urls);
-		ps.executeUpdate();
 		//set all the start indexing to 0
 		SQL="UPDATE url set startIndexing=0 WHERE doneIndexing=0 and startIndexing=1";
 		ps= conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
@@ -375,8 +371,12 @@ public class DatabaseConnection {
 	static public void updateIDIncrementally() throws SQLException{
 		//String SQL ="select @i := -1;update url set id = (select @i := @i + 1);";
 		//"ALTER TABLE tbl AUTO_INCREMENT = -1";
-		String SQL="SET @a = -1;UPDATE url SET id = @a:=@a+1;";
+		String SQL="SET @a = -1";
 		PreparedStatement ps= conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
+		//ps.setInt(1, -1);
+		ps.executeUpdate();
+		SQL="UPDATE url SET id = @a:=@a+1";
+		ps= conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
 		//ps.setInt(1, -1);
 		ps.executeUpdate();
 		
@@ -614,6 +614,16 @@ public class DatabaseConnection {
 			result = rs.getInt(1);
 		}
 		return result;
+	}
+	public static void deleteRankResults() {
+		String SQL="DELETE FROM rankerresult";
+		try {
+		PreparedStatement ps=conn.prepareStatement( SQL, Statement.RETURN_GENERATED_KEYS );
+			ps.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
 
