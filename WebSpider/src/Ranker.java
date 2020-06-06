@@ -33,6 +33,7 @@ public class Ranker {
 	static List<String> URLs = new ArrayList<String>(),URLsMoreWords = new ArrayList<String>();;
 	static Map< String,Double> Docs =  new HashMap< String,Double>(); 
 	static Connection conn;
+	static int ResultsSearch;
 	final static double title_weight = 0.3, h1_weight = 0.15,h2_weight = 0.1,
 			h3_weight = 0.1,h4_weight = 0.025,h5_weight = 0.025,h6_weight = 0.025,
 			italic_weight = 0.1, bold_weight = 0.1,p_weight = 0.075;
@@ -63,6 +64,7 @@ public class Ranker {
 		// System.out.print("-------------------Showing all results----------------------");
 		// System.out.print("\r\n");
 	     //System.out.println(entriesSortedByValues(Docs));
+	    
 	    Map<String,Double> topTen =
 	    	    Docs.entrySet().stream()
 	    	       .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
@@ -75,6 +77,7 @@ public class Ranker {
 			  System.out.println("Key final= " + entry.getKey() + 
 	                    ", Value final= " + entry.getValue()); 
 		  }
+		  System.out.println("Number of URLs Calculated: "+ResultsSearch);
 		  return urls;
 	// return topTen;
 		// calculatePageRank();
@@ -97,7 +100,7 @@ public class Ranker {
 	private static void PhraseSearching(String s,List<String> ParsedQuery) throws  SQLException {
 	    String QueryWithoutQuotes =s.replaceAll("^\"+|\"+$", "");
 	    List<String> inputString = ParsedQuery;
-		
+	    ResultsSearch = Docs.size();
 	    for(int i=0; i<inputString.size(); i++) {
 	    
 	    	getUrlsWithTerm(inputString.get(i),0);

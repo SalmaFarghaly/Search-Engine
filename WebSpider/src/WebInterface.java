@@ -32,11 +32,12 @@ public class WebInterface extends HttpServlet {
 		String SearchInput = request.getParameter("SearchInput");
 		System.out.print("SEARCH Input : -----------"+SearchInput+"\n");
 		double time = 0;
+		long start = 0;
 		if (SearchInput != null && SearchInput != "") // if action is not null
 		{
 			int PagesNum = 0;
 		
-			
+			 start = System.currentTimeMillis();
 
 				// ------------------------------------------- adding first part of template
 				// with style sheet -------------------------------
@@ -71,6 +72,7 @@ public class WebInterface extends HttpServlet {
 						rd2.include(request, response);
 						out.flush();
 						out.close();
+						
 				}
 				
 				System.out.println("Done");
@@ -83,6 +85,10 @@ public class WebInterface extends HttpServlet {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			 long end = System.currentTimeMillis();
+		      //finding the time difference and converting it into seconds
+		      float sec = (end - start) / 1000F; System.out.println("Time of WebInterface: "+ sec + " seconds");
+
 
 		}
 
@@ -90,6 +96,10 @@ public class WebInterface extends HttpServlet {
 
 	public static void AddingFirstHTMLPart(PrintWriter out,String SearchInput) {
 		// to edit the title
+	    if( SearchInput.startsWith("\"") & SearchInput.endsWith("\"")) {
+	    	  SearchInput =SearchInput.replaceAll("^\"+|\"+$", "");
+	    	 //SearchInput = "\""+QueryWithoutQuotes+"\"";
+	    }
 		out.println("<!doctype html>\n" + "<html>\n" + "\n" + "<head>\n" + "    <title>" + SearchInput
 				+ " - Bing Search</title>\n"
 				+ "    <link rel=\"shortcut icon\" type=\"image/ico\" href=\"images/favicon.ico\" />\n"
@@ -102,6 +112,10 @@ public class WebInterface extends HttpServlet {
 
 	}
 	public static void AddingPagebar(PrintWriter out,int PagesNum,String SearchInput) {
+		  if( SearchInput.startsWith("\"") & SearchInput.endsWith("\"")) {
+	    	  SearchInput =SearchInput.replaceAll("^\"+|\"+$", "");
+	    	 //SearchInput = "\""+QueryWithoutQuotes+"\"";
+	    }
 		System.out.println("Done Adding document to html file");
 		out.println("<body>     \n" + 
 				"		<br>\n" + 
@@ -123,6 +137,10 @@ public class WebInterface extends HttpServlet {
 	
 	public static void AddingResults(PrintWriter out,List<String> output,String SearchInput) {
 		int PageList = 0;
+		   if( SearchInput.startsWith("\"") & SearchInput.endsWith("\"")) {
+		    	  SearchInput =SearchInput.replaceAll("^\"+|\"+$", "");
+		    	 //SearchInput = "\""+QueryWithoutQuotes+"\"";
+		    }
 		String names[] = SearchInput.split(" ");
 		String CapitalizedInput[] = new String[names.length];
 		for(int i=0;i<names.length; i++)
